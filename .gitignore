@@ -1,0 +1,11 @@
+# .gitignore 예시
+/build
+/.idea
+*.iml
+*.log
+.DS_Store
+/out
+/target
+*.class
+*.jar
+application.yml
