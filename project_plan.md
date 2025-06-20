@@ -1,5 +1,48 @@
 # 📊 포트폴리오 통합 관리 시스템 v2.0 - 완전한 구현 계획
 
+## 🌿 Git 브랜치 전략 (GitHub Flow)
+
+### **브랜치 구조**
+```
+main                        # 완료된 Phase들만 머지 (프로덕션)
+├── develop                 # 현재 개발중인 통합 브랜치
+├── feature/phase-2-entity  # Phase 2: Entity 구현
+├── feature/phase-3-auth    # Phase 3: 인증 시스템  
+├── feature/phase-4-api     # Phase 4: API 연동
+└── feature/frontend        # 프론트엔드 개발
+```
+
+### **작업 플로우**
+1. **새 기능 개발**
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b feature/feature-name
+   ```
+
+2. **작업 후 커밋**
+   ```bash
+   git add .
+   git commit -m "feat: implement feature"
+   git push -u origin feature/feature-name
+   ```
+
+3. **Pull Request**
+   - GitHub에서 feature → develop PR 생성
+   - 코드 리뷰 후 머지
+   - Phase 완료시 develop → main 머지
+
+### **커밋 메시지 규칙**
+- `feat:` 새 기능 추가
+- `fix:` 버그 수정
+- `docs:` 문서 수정
+- `style:` 코드 포맷팅
+- `refactor:` 코드 리팩토링
+- `test:` 테스트 코드
+- `chore:` 빌드 관련 수정
+
+---
+
 ## 🎯 프로젝트 개요
 - **프로젝트명**: Asset Manager - 포트폴리오 통합 관리 시스템 (PMS v2.0)
 - **버전**: v2.0.0 (완전 재구축)
