@@ -42,8 +42,8 @@ D:/jwj/Assetmanager_jwj/
 │   ├── Redis 7.0                     # 캐싱 서버 (포트 6379)
 │   └── phpMyAdmin                    # 데이터베이스 관리 도구 (포트 8081)
 │
-└── 🎯 현재 상태: Spring Boot + MyBatis 프로젝트 생성 준비
-    📋 다음: 기본 프로젝트 구조 생성
+└── 🎯 현재 상태: Phase 2.1 완료, Phase 2.2 Domain 모델 구현 시작
+    📋 다음: User, Asset, Transaction, PriceHistory 도메인 클래스 구현
 ```
 
 ## 🛠️ **기술 스택**
@@ -94,11 +94,11 @@ D:/jwj/Assetmanager_jwj/
 - [x] Spring Boot 프로젝트 생성 준비
 
 ### **🗄️ Phase 2: MyBatis 기반 데이터 계층** 🔄
-- [ ] **2.1 프로젝트 구조 생성**
-  - [ ] build.gradle (MyBatis 의존성)
-  - [ ] application.yml (MyBatis 설정)
-  - [ ] mybatis-config.xml 
-  - [ ] 기본 패키지 구조 생성
+- [x] **2.1 프로젝트 구조 생성**
+  - [x] build.gradle (MyBatis 의존성)
+  - [x] application.yml (MyBatis 설정)
+  - [x] mybatis-config.xml 
+  - [x] 기본 패키지 구조 생성
 
 - [ ] **2.2 Domain 모델 구현**
   - [ ] User, Asset, Transaction, PriceHistory 도메인 클래스
@@ -187,19 +187,19 @@ main                        # 완료된 Phase들만 머지 (프로덕션)
 - 프로젝트 구조 계획
 - 기술 스택 선정
 - 문서 구조 정리 및 분리
+- **Phase 2.1 프로젝트 구조 생성 완료**
+  - build.gradle MyBatis 의존성 교체
+  - application.yml 및 mybatis-config.xml 설정
+  - 기본 패키지 구조 확인
 
-### 🔄 **다음 작업 (Phase 2.1 시작)**
-1. **Spring Boot + MyBatis 프로젝트 생성**
-   - build.gradle 작성 (MyBatis 의존성 포함)
-   - application.yml 및 mybatis-config.xml 설정
-   - 기본 패키지 구조 생성
+### 🔄 **다음 작업 (Phase 2.2 시작)**
+1. **Domain 모델 구현** (현재 브랜치: feature/phase-2.2-domain-models)
+   - User 도메인 클래스 및 비즈니스 로직
+   - Asset 도메인 클래스 및 비즈니스 로직
+   - Transaction, PriceHistory, ApiKey, PortfolioSnapshot 도메인 클래스
 
-2. **Docker 환경 구축**
-   - docker-compose.dev.yml 작성
-   - MySQL, Redis 컨테이너 실행 확인
-
-3. **기본 Domain 클래스 구현**
-   - User, Asset 도메인 모델 작성
+2. **참고 문서**
+   - domain-models.md에 상세한 비즈니스 로직 메서드 예시 포함
 
 ---
 
