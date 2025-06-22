@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <settings>
+        <!-- 캐멀 케이스 자동 변환 -->
+        <setting name="mapUnderscoreToCamelCase" value="true" />
+        
+        <!-- 지연 로딩 설정 -->
+        <setting name="lazyLoadingEnabled" value="true" />
+        <setting name="aggressiveLazyLoading" value="false" />
+        
+        <!-- 캐시 설정 -->
+        <setting name="cacheEnabled" value="true" />
+        <setting name="localCacheScope" value="SESSION" />
+        
+        <!-- 로그 설정 -->
+        <setting name="logImpl" value="SLF4J" />
+        
+        <!-- 타임아웃 설정 -->
+        <setting name="defaultStatementTimeout" value="30" />
+        <setting name="defaultFetchSize" value="100" />
+        
+        <!-- Null 값 처리 -->
+        <setting name="callSettersOnNulls" value="true" />
+        <setting name="returnInstanceForEmptyRow" value="true" />
+    </settings>
+    
+    <!-- 타입 별칭 설정 -->
+    <typeAliases>
+        <package name="com.assetmanager.domain" />
+    </typeAliases>
+    
+    <!-- 타입 핸들러 -->
+    <typeHandlers>
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.User$AuthProvider" />
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.User$Role" />
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.Asset$AssetType" />
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.Transaction$TransactionType" />
+    </typeHandlers>
+    
+    <!-- 플러그인 설정 -->
+    <plugins>
+        <!-- PageHelper 플러그인 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <property name="helperDialect" value="mysql" />
+            <property name="reasonable" value="true" />
+            <property name="supportMethodsArguments" value="true" />
+            <property name="params" value="count=countSql" />
+        </plugin>
+    </plugins>
+</configuration>

@@ -1,0 +1,111 @@
+spring:
+  profiles:
+    active: dev
+  
+  # MyBatis 설정
+  datasource:
+    url: jdbc:mysql://localhost:3306/assetmanager
+    username: assetmanager
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
+  
+  # Redis 설정
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+# MyBatis 설정
+mybatis:
+  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.assetmanager.domain
+  configuration:
+    map-underscore-to-camel-case: true
+    default-fetch-size: 100
+    default-statement-timeout: 30
+
+# PageHelper 설정
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+# 로깅 설정
+logging:
+  level:
+    com.assetmanager: DEBUG
+    com.assetmanager.mapper: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 서버 설정
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    session:
+      timeout: 30m
+
+# JWT 설정
+jwt:
+  secret: mySecretKey
+  expiration: 86400000  # 24시간
+
+# 외부 API 설정
+api:
+  upbit:
+    base-url: https://api.upbit.com
+    rate-limit: 100  # 초당 요청 수
+  alpha-vantage:
+    base-url: https://www.alphavantage.co
+    api-key: your-api-key
+    rate-limit: 5   # 분당 요청 수
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  
+  # 개발환경 전용 설정
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+      
+  # 프로덕션 환경 설정
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/${DB_NAME:assetmanager}
+    username: ${DB_USERNAME:assetmanager}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 10
+
+logging:
+  level:
+    com.assetmanager: INFO
+    org.springframework.security: WARN
+    org.springframework.web: WARN
