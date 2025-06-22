@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - 포트폴리오 매니저</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --error-color: #e74c3c;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --border-color: #e1e8ed;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.37);
+            --mocha-muse: #8B7355;
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #ffffff;
+            --text-secondary: #bdc3c7;
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2c2c2c;
+            --border-color: #444444;
+            --glass-bg: rgba(40, 40, 40, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--mocha-muse) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 배경 애니메이션 요소들 */
+        .bg-decoration {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-decoration:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: var(--success-color);
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-decoration:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: var(--warning-color);
+            top: 70%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .bg-decoration:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            background: var(--error-color);
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .login-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow-light);
+            position: relative;
+            z-index: 10;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .brand-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .login-form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+        }
+
+        .checkbox-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: opacity 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            opacity: 0.8;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .login-button:hover::before {
+            left: 100%;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .divider span {
+            padding: 0 20px;
+            background: var(--glass-bg);
+        }
+
+        .social-login {
+            display: grid;
+            gap: 12px;
+        }
+
+        .social-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .social-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-button.google {
+            border-color: #db4437;
+            color: #db4437;
+        }
+
+        .social-button.google:hover {
+            background: #db4437;
+            color: white;
+        }
+
+        .social-button.kakao {
+            border-color: #fee500;
+            color: #3c1e1e;
+            background: #fee500;
+        }
+
+        .social-button.kakao:hover {
+            background: #fdd835;
+        }
+
+        .social-button.naver {
+            border-color: #03c75a;
+            color: #03c75a;
+        }
+
+        .social-button.naver:hover {
+            background: #03c75a;
+            color: white;
+        }
+
+        .social-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .signup-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 25px;
+                margin: 10px;
+                border-radius: 20px;
+            }
+
+            .brand-title {
+                font-size: 1.6rem;
+            }
+
+            .form-input {
+                padding: 14px 18px;
+            }
+
+            .login-button {
+                padding: 14px;
+            }
+        }
+
+        /* 로딩 애니메이션 */
+        .loading {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .button-text {
+            transition: opacity 0.3s ease;
+        }
+
+        /* 에러 메시지 */
+        .error-message {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 배경 장식 요소들 -->
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+
+    <!-- 테마 토글 버튼 -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="테마 변경">
+        <span id="theme-icon">🌙</span>
+    </button>
+
+    <div class="login-container">
+        <!-- 로고 섹션 -->
+        <div class="logo-section">
+            <div class="logo">
+                <span class="logo-icon">📊</span>
+            </div>
+            <h1 class="brand-title">Portfolio Manager</h1>
+            <p class="brand-subtitle">스마트한 자산 관리의 시작</p>
+        </div>
+
+        <!-- 에러 메시지 -->
+        <div id="error-message" class="error-message"></div>
+
+        <!-- 로그인 폼 -->
+        <form class="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label" for="email">이메일</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    class="form-input" 
+                    placeholder="이메일을 입력하세요"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">비밀번호</label>
+                <div style="position: relative;">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        class="form-input" 
+                        placeholder="비밀번호를 입력하세요"
+                        required
+                    >
+                    <button 
+                        type="button" 
+                        class="password-toggle" 
+                        onclick="togglePassword()"
+                        aria-label="비밀번호 보기/숨기기"
+                    >
+                        <span id="password-icon">👁️</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" class="checkbox" id="remember">
+                    <span class="checkbox-label">로그인 상태 유지</span>
+                </label>
+                <a href="#" class="forgot-password">비밀번호 찾기</a>
+            </div>
+
+            <button type="submit" class="login-button" id="login-btn">
+                <div class="loading" id="loading"></div>
+                <span class="button-text" id="button-text">로그인</span>
+            </button>
+        </form>
+
+        <!-- 구분선 -->
+        <div class="divider">
+            <span>또는</span>
+        </div>
+
+        <!-- 소셜 로그인 -->
+        <div class="social-login">
+            <a href="#" class="social-button google" onclick="handleSocialLogin('google')">
+                <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Google로 계속하기
+            </a>
+            
+            <a href="#" class="social-button kakao" onclick="handleSocialLogin('kakao')">
+                <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.76 1.8 5.22 4.56 6.84-.24-.84-.48-2.16-.12-3.12.36-.84 2.28-9.72 2.28-9.72s-.6 1.08-.6 2.64c0 2.52 1.44 4.44 3.24 4.44 1.56 0 2.28-1.2 2.28-2.64 0-1.68-1.08-4.2-1.08-4.2s.96-.12 2.16.84c1.08.84 1.8 2.16 1.8 3.72 0 2.88-2.4 5.16-5.4 5.16-3.12 0-5.4-2.4-5.4-5.16 0-1.56.72-2.88 1.8-3.72 1.2-.96 2.16-.84 2.16-.84s-1.08 2.52-1.08 4.2c0 1.44.72 2.64 2.28 2.64 1.8 0 3.24-1.92 3.24-4.44 0-1.56-.6-2.64-.6-2.64s1.92 8.88 2.28 9.72c.36.96.12 2.28-.12 3.12C20.2 16.02 22 13.56 22 10.8 22 6.48 17.52 3 12 3z"/>
+                </svg>
+                카카오로 계속하기
+            </a>
+            
+            <a href="#" class="social-button naver" onclick="handleSocialLogin('naver')">
+                <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16.273 12.845 7.376 0H0v24h7.726V11.156L16.624 24H24V0h-7.727v12.845z"/>
+                </svg>
+                네이버로 계속하기
+            </a>
+        </div>
+
+        <!-- 회원가입 링크 -->
+        <div class="signup-link">
+            아직 계정이 없으신가요?
+            <a href="#" onclick="showSignup()">회원가입</a>
+        </div>
+    </div>
+
+    <script>
+        // 테마 토글 기능
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // 페이지 로드 시 저장된 테마 적용
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+            }
+        });
+
+        // 비밀번호 보기/숨기기
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('password-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.textContent = '👁️';
+            }
+        }
+
+        // 에러 메시지 표시
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // 로딩 상태 토글
+        function toggleLoading(isLoading) {
+            const button = document.getElementById('login-btn');
+            const loading = document.getElementById('loading');
+            const buttonText = document.getElementById('button-text');
+            
+            if (isLoading) {
+                loading.style.display = 'inline-block';
+                buttonText.style.opacity = '0.7';
+                button.disabled = true;
+                button.style.cursor = 'not-allowed';
+            } else {
+                loading.style.display = 'none';
+                buttonText.style.opacity = '1';
+                button.disabled = false;
+                button.style.cursor = 'pointer';
+            }
+        }
+
+        // 로그인 처리
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            // 간단한 유효성 검사
+            if (!email || !password) {
+                showError('이메일과 비밀번호를 모두 입력해주세요.');
+                return;
+            }
+            
+            toggleLoading(true);
+            
+            try {
+                // 실제 구현에서는 여기에 API 호출
+                await new Promise(resolve => setTimeout(resolve, 2000)); // 2초 대기 (시뮬레이션)
+                
+                // 로그인 성공 시뮬레이션
+                if (email === 'demo@example.com' && password === 'demo123') {
+                    alert('로그인 성공! 대시보드로 이동합니다.');
+                    // 실제로는 window.location.href = '/dashboard'; 
+                } else {
+                    showError('이메일 또는 비밀번호가 올바르지 않습니다.');
+                }
+            } catch (error) {
+                showError('로그인 중 오류가 발생했습니다. 다시 시도해주세요.');
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        // 소셜 로그인 처리
+        function handleSocialLogin(provider) {
+            toggleLoading(true);
+            
+            // 실제 구현에서는 OAuth 리다이렉션
+            setTimeout(() => {
+                alert(`${provider} 로그인 처리 중...`);
+                toggleLoading(false);
+            }, 1500);
+        }
+
+        // 회원가입 페이지로 이동
+        function showSignup() {
+            alert('회원가입 페이지로 이동합니다.');
+            // 실제로는 window.location.href = '/signup';
+        }
+
+        // 입력 필드 애니메이션
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+
+        // 엔터 키로 로그인
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                const loginForm = document.querySelector('.login-form');
+                if (loginForm) {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+
+        // 데모 계정 안내
+        console.log('데모 계정: demo@example.com / demo123');
+    </script>
+</body>
+</html>
