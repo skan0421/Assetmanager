@@ -14,8 +14,12 @@ configurations {
     }
 }
 
+// 저장소 설정 (플러그인 저장소 추가)
 repositories {
     mavenCentral()
+    gradlePluginPortal()  // Gradle 플러그인 저장소 추가
+    maven { url 'https://repo.spring.io/milestone' }  // Spring 마일스톤 저장소
+    maven { url 'https://repo.spring.io/snapshot' }   // Spring 스냅샷 저장소
 }
 
 dependencies {

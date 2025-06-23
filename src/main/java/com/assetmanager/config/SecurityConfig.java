@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .ignoringRequestMatchers("/h2-console/**")
             )
             .headers(headers -> headers
-                .frameOptions().sameOrigin()  // H2 콘솔을 위한 설정
+                .frameOptions(frameOptions -> frameOptions.sameOrigin())  // 수정된 방식
             )
             .httpBasic(httpBasic -> {});  // 기본 HTTP 인증 사용
 
