@@ -29,7 +29,11 @@ D:/jwj/Assetmanager_jwj/
 │   │   ├── controller/                     # REST API 컨트롤러
 │   │   ├── config/                         # Spring 설정 클래스
 │   │   ├── security/                       # Spring Security 설정
-│   │   └── dto/                           # 데이터 전송 객체
+│   │   ├── dto/                           # 데이터 전송 객체
+│   │   └── test/                          # 테스트 관련 코드 (분리)
+│   │       ├── controller/                  # 테스트 컨트롤러
+│   │       ├── util/                        # 테스트 유틸리티
+│   │       └── config/                      # 테스트 설정
 │   │
 │   ├── src/main/resources/
 │   │   ├── application.yml               # Spring Boot 설정

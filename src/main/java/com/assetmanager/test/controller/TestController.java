@@ -1,4 +1,4 @@
-package com.assetmanager.controller;
+package com.assetmanager.test.controller;
 
 import com.assetmanager.domain.User;
 import com.assetmanager.mapper.UserMapper;
@@ -14,6 +14,9 @@ import java.util.Map;
 /**
  * 테스트용 컨트롤러
  * Phase 2.3: MyBatis 연결 테스트
+ * 
+ * 📂 위치: test.controller 패키지 (프로덕션 코드와 분리)
+ * 🎯 목적: 개발 중 데이터베이스 연결 및 기능 테스트
  */
 @RestController
 @RequestMapping("/api/test")
@@ -24,6 +27,7 @@ public class TestController {
     
     /**
      * 애플리케이션 상태 확인
+     * URL: GET /api/test/health
      */
     @GetMapping("/health")
     public Map<String, Object> health() {
@@ -31,11 +35,13 @@ public class TestController {
         status.put("status", "UP");
         status.put("timestamp", System.currentTimeMillis());
         status.put("message", "Asset Manager Application is running");
+        status.put("location", "test.controller package");
         return status;
     }
     
     /**
      * 데이터베이스 연결 테스트
+     * URL: GET /api/test/db
      */
     @GetMapping("/db")
     public Map<String, Object> testDatabase() {
@@ -50,6 +56,7 @@ public class TestController {
                 result.put("activeUserCount", userCount);
                 result.put("totalUsers", users.size());
                 result.put("users", users);
+                result.put("mapperStatus", "UserMapper loaded successfully");
             } else {
                 result.put("status", "ERROR");
                 result.put("message", "UserMapper is not available");
@@ -57,8 +64,24 @@ public class TestController {
         } catch (Exception e) {
             result.put("status", "ERROR");
             result.put("message", e.getMessage());
+            result.put("errorType", e.getClass().getSimpleName());
         }
         
         return result;
+    }
+    
+    /**
+     * 개발 환경 정보 확인
+     * URL: GET /api/test/env
+     */
+    @GetMapping("/env")
+    public Map<String, Object> environmentInfo() {
+        Map<String, Object> env = new HashMap<>();
+        env.put("javaVersion", System.getProperty("java.version"));
+        env.put("springProfile", System.getProperty("spring.profiles.active", "default"));
+        env.put("osName", System.getProperty("os.name"));
+        env.put("projectStructure", "Separated test package");
+        env.put("packageLocation", this.getClass().getPackage().getName());
+        return env;
     }
 }
