@@ -31,12 +31,13 @@
         <package name="com.assetmanager.domain" />
     </typeAliases>
     
-    <!-- 타입 핸들러 -->
+    <!-- 타입 핸들러 - Enum 클래스 경로 수정 -->
     <typeHandlers>
-        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.User$AuthProvider" />
-        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.User$Role" />
-        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.Asset$AssetType" />
-        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.Transaction$TransactionType" />
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.AuthProvider" />
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.Role" />
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.AssetType" />
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.ExchangeType" />
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.assetmanager.domain.TransactionType" />
     </typeHandlers>
     
     <!-- 플러그인 설정 -->

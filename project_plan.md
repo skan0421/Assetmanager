@@ -100,14 +100,17 @@ D:/jwj/Assetmanager_jwj/
   - [x] mybatis-config.xml 
   - [x] 기본 패키지 구조 생성
 
-- [ ] **2.2 Domain 모델 구현**
-  - [ ] User, Asset, Transaction, PriceHistory 도메인 클래스
-  - [ ] 비즈니스 로직 메서드 구현
+- [x] **2.2 Domain 모델 구현**
+  - [x] User, Asset, Transaction, PriceHistory 도메인 클래스
+  - [x] 비즈니스 로직 메서드 구현
+  - [x] AuthProvider, Role, AssetType 등 Enum 클래스
 
-- [ ] **2.3 MyBatis Mapper 구현**
-  - [ ] UserMapper, AssetMapper 인터페이스
+- [🔄] **2.3 MyBatis Mapper 구현**
+  - [x] mybatis-config.xml 설정 수정 (Enum 경로 문제 해결)
+  - [x] UserMapper 인터페이스 (기본 CRUD)
+  - [x] TestController (데이터베이스 연결 테스트용)
+  - [ ] AssetMapper, TransactionMapper 인터페이스
   - [ ] XML 매퍼 파일 작성
-  - [ ] CRUD 및 복잡한 쿼리 구현
 
 - [ ] **2.4 데이터베이스 테스트**
   - [ ] Docker MySQL 연결 테스트
