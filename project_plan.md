@@ -206,15 +206,31 @@ main                        # 완료된 Phase들만 머지 (프로덕션)
   - build.gradle MyBatis 의존성 교체
   - application.yml 및 mybatis-config.xml 설정
   - 기본 패키지 구조 확인
+- **Phase 2.2 Domain 모델 구현 완료**
+  - 모든 Domain 클래스 database-schema.md에 맞춰 수정
+  - 누락된 필드들 추가 (createdAt, updatedAt, profileImageUrl 등)
+  - User, Asset, Transaction, PriceHistory, ApiKey, PortfolioSnapshot 완료
+- **Phase 2.3 MyBatis Mapper 테스트 시작**
+  - 테스트 환경 구축 (H2 인메모리 DB, application-test.yml)
+  - UserMapper, AssetMapper 메서드 누락 부분 수정
+  - UserMapperTest, AssetMapperTest 생성 완료
+  - Spring 컨텍스트 로딩 문제 해결 (MyBatis 설정 충돌 해결)
 
-### 🔄 **다음 작업 (Phase 2.2 시작)**
-1. **Domain 모델 구현** (현재 브랜치: feature/phase-2.2-domain-models)
-   - User 도메인 클래스 및 비즈니스 로직
-   - Asset 도메인 클래스 및 비즈니스 로직
-   - Transaction, PriceHistory, ApiKey, PortfolioSnapshot 도메인 클래스
+### 🔄 **다음 작업 (Phase 2.3 계속)**
+1. **MyBatis Mapper 테스트 완료** (현재 브랜치: feature/phase-2.3-mapper-tests)
+   - ✅ UserMapperTest 생성 (일부 테스트 실패 - 수정 필요)
+   - ✅ AssetMapperTest 생성
+   - 📋 TransactionMapperTest 생성 예정
+   - 📋 PriceHistoryMapperTest 생성 예정
+   - 📋 ApiKeyMapperTest 생성 예정
+   - 📋 PortfolioSnapshotMapperTest 생성 예정
 
-2. **참고 문서**
-   - domain-models.md에 상세한 비즈니스 로직 메서드 예시 포함
+2. **테스트 실패 이슈 해결**
+   - UserMapperTest의 3개 실패 테스트 수정 필요
+   - 필드 매핑 및 타입 호환성 문제 해결
+
+3. **참고 문서**
+   - mapper-implementation-plan.md에 상세한 구현 계획
 
 ---
 

@@ -28,7 +28,8 @@ public class PriceHistory {
     private BigDecimal closePrice;
     private BigDecimal changeRate;
     private String dataSource;
-    private LocalDateTime timestamp;
+    private LocalDateTime priceTimestamp;
+    private LocalDateTime createdAt;
 
     public boolean hasPriceChanged() {
         return closePrice != null && openPrice != null && closePrice.compareTo(openPrice) != 0;
@@ -72,6 +73,6 @@ public class PriceHistory {
     }
 
     public boolean isRecentData() {
-        return timestamp != null && timestamp.isAfter(LocalDateTime.now().minusDays(1));
+        return priceTimestamp != null && priceTimestamp.isAfter(LocalDateTime.now().minusDays(1));
     }
 }

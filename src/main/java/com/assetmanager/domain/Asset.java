@@ -2,6 +2,7 @@ package com.assetmanager.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +22,14 @@ public class Asset {
     private String name;
     private AssetType assetType;
     private String exchange;
+    private String countryCode;
     private BigDecimal quantity;
     private BigDecimal averagePrice;
+    private String currency;
+    private Boolean isActive;
+    private String notes;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public BigDecimal getTotalInvestmentAmount() {
         if (quantity == null || averagePrice == null) {

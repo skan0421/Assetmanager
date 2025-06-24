@@ -52,10 +52,16 @@ public interface UserMapper {
     void softDelete(Long id);
     
     /**
-     * 마지막 로그인 시간 업데이트
+     * 마지막 로그인 시간 업데이트 (시간 지정)
+     */
+    @Update("UPDATE users SET last_login_at = #{loginTime}, updated_at = NOW() WHERE id = #{id}")
+    void updateLastLogin(@Param("id") Long id, @Param("loginTime") java.time.LocalDateTime loginTime);
+    
+    /**
+     * 마지막 로그인 시간 업데이트 (현재 시간)
      */
     @Update("UPDATE users SET last_login_at = NOW(), updated_at = NOW() WHERE id = #{id}")
-    void updateLastLogin(Long id);
+    void updateLastLoginNow(Long id);
     
     // =================
     // 조회 및 검색
@@ -98,10 +104,10 @@ public interface UserMapper {
     int countTotalUsers();
     
     /**
-     * 소셜 로그인 사용자 수 조회
+     * 소셜 로그인 사용자 조회 (LOCAL 제외)
      */
-    @Select("SELECT COUNT(*) FROM users WHERE auth_provider != 'LOCAL' AND is_active = true")
-    int countSocialLoginUsers();
+    @Select("SELECT * FROM users WHERE auth_provider != 'LOCAL' AND is_active = true ORDER BY created_at DESC")
+    List<User> findSocialUsers();
     
     /**
      * 이메일 중복 확인

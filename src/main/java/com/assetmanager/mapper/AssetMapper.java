@@ -20,10 +20,10 @@ public interface AssetMapper {
     // =================
     
     /**
-     * 자산 등록
+     * 자산 등록 (새로운 필드 포함)
      */
-    @Insert("INSERT INTO assets (user_id, symbol, name, asset_type, exchange, quantity, average_price, created_at, updated_at) " +
-            "VALUES (#{userId}, #{symbol}, #{name}, #{assetType}, #{exchange}, #{quantity}, #{averagePrice}, NOW(), NOW())")
+    @Insert("INSERT INTO assets (user_id, symbol, name, asset_type, exchange, country_code, quantity, average_price, currency, is_active, notes, created_at, updated_at) " +
+            "VALUES (#{userId}, #{symbol}, #{name}, #{assetType}, #{exchange}, #{countryCode}, #{quantity}, #{averagePrice}, #{currency}, #{isActive}, #{notes}, NOW(), NOW())")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Asset asset);
     
@@ -34,10 +34,10 @@ public interface AssetMapper {
     Optional<Asset> findById(Long id);
     
     /**
-     * 자산 정보 수정
+     * 자산 정보 수정 (새로운 필드 포함)
      */
     @Update("UPDATE assets SET quantity = #{quantity}, average_price = #{averagePrice}, " +
-            "updated_at = NOW() WHERE id = #{id}")
+            "notes = #{notes}, updated_at = NOW() WHERE id = #{id}")
     void update(Asset asset);
     
     /**
@@ -131,4 +131,28 @@ public interface AssetMapper {
             "AND is_active = true ORDER BY symbol")
     List<Asset> findByUserIdAndExchange(@Param("userId") Long userId, 
                                        @Param("exchange") String exchange);
+    
+    /**
+     * 국가 코드별 자산 조회
+     */
+    @Select("SELECT * FROM assets WHERE user_id = #{userId} AND country_code = #{countryCode} " +
+            "AND is_active = true ORDER BY symbol")
+    List<Asset> findByUserIdAndCountryCode(@Param("userId") Long userId, 
+                                          @Param("countryCode") String countryCode);
+    
+    /**
+     * 통화별 자산 조회
+     */
+    @Select("SELECT * FROM assets WHERE user_id = #{userId} AND currency = #{currency} " +
+            "AND is_active = true ORDER BY symbol")
+    List<Asset> findByUserIdAndCurrency(@Param("userId") Long userId, 
+                                       @Param("currency") String currency);
+    
+    /**
+     * 자산 타입별 개수 조회
+     */
+    @Select("SELECT COUNT(*) FROM assets WHERE user_id = #{userId} AND asset_type = #{assetType} " +
+            "AND is_active = true")
+    int countAssetsByType(@Param("userId") Long userId, 
+                         @Param("assetType") AssetType assetType);
 }

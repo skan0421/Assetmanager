@@ -3,6 +3,7 @@ package com.assetmanager.domain;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,8 @@ public class PortfolioSnapshot {
     private Integer assetCount;
     private BigDecimal cryptoValue;
     private BigDecimal stockValue;
+    private String notes;
+    private LocalDateTime createdAt;
 
     public void recalculateProfitRate() {
         if (totalInvestment == null || totalInvestment.compareTo(BigDecimal.ZERO) == 0) {

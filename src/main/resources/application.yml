@@ -29,9 +29,10 @@ spring:
 
 # MyBatis 설정
 mybatis:
-  config-location: classpath:mybatis-config.xml
   mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.assetmanager.domain
+  configuration:
+    map-underscore-to-camel-case: true
 
 # PageHelper 설정
 pagehelper:

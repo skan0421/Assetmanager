@@ -28,6 +28,8 @@ public class ApiKey {
     private Boolean isActive;
     private LocalDateTime lastUsedAt;
     private LocalDateTime expiresAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public boolean isActiveAndValid() {
         return Boolean.TRUE.equals(isActive) && !isExpired();

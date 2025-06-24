@@ -29,6 +29,8 @@ public class Transaction {
     private LocalDateTime transactionDate;
     private String notes;
     private String externalId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public BigDecimal calculateNetAmount() {
         BigDecimal net = totalAmount;

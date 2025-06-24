@@ -21,7 +21,10 @@ public class User {
     private AuthProvider authProvider;
     private Role role;
     private Boolean isActive;
+    private String profileImageUrl;
     private LocalDateTime lastLoginAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public boolean isSocialLogin() {
         return authProvider != null && authProvider != AuthProvider.LOCAL;
