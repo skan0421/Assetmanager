@@ -220,7 +220,7 @@ main                        # 완료된 Phase들만 머지 (프로덕션)
 ### 🔄 **다음 작업 (Phase 2.3 계속)**
 1. **나머지 MyBatis Mapper 테스트 구현** (현재 브랜치: feature/phase-2.4-database-test)
    - ✅ UserMapperTest 완료 (15개 테스트 모두 통과)
-   - 📋 AssetMapperTest 구현 및 테스트
+   - ✅ AssetMapperTest 완료 (18개 테스트 모두 통과)
    - 📋 TransactionMapperTest 생성 및 테스트
    - 📋 PriceHistoryMapperTest 생성 및 테스트
    - 📋 ApiKeyMapperTest 생성 및 테스트
