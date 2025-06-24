@@ -349,7 +349,7 @@ public class TransactionMapperTest {
 
         // Then
         // 평균 매수가 = (7250 + 4800) / (50 + 30) = 12050 / 80 = 150.625
-        assertThat(averagePrice).isEqualByComparingTo(new BigDecimal("150.625"));
+        assertThat(averagePrice).isEqualByComparingTo(new BigDecimal("150.6250"));
     }
 
     @Test
