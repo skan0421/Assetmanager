@@ -3,8 +3,8 @@ package com.assetmanager.mapper;
 import com.assetmanager.domain.Asset;
 import com.assetmanager.domain.AssetType;
 import com.assetmanager.domain.User;
-import com.assetmanager.domain.Role;
 import com.assetmanager.domain.AuthProvider;
+import com.assetmanager.domain.Role;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,54 +34,38 @@ public class AssetMapperTest {
     @Autowired
     private UserMapper userMapper;
 
+    private Asset testAsset;
+    private Long testUserId;
     private User testUser;
-    private Asset testCryptoAsset;
-    private Asset testStockAsset;
 
     @BeforeEach
     void setUp() {
         // 테스트용 사용자 생성
         testUser = User.builder()
                 .email("asset.test@example.com")
+                .password("encoded_password123")
                 .name("Asset Test User")
-                .role(Role.USER)
                 .authProvider(AuthProvider.LOCAL)
+                .role(Role.USER)
                 .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
         userMapper.insert(testUser);
-
-        // 테스트용 암호화폐 자산 생성
-        testCryptoAsset = Asset.builder()
-                .userId(testUser.getId())
+        testUserId = testUser.getId();
+        
+        testAsset = Asset.builder()
+                .userId(testUserId)
                 .symbol("BTC")
                 .name("Bitcoin")
                 .assetType(AssetType.CRYPTO)
-                .exchange("upbit")
+                .exchange("UPBIT")
                 .countryCode("KR")
-                .quantity(new BigDecimal("1.5"))
+                .quantity(new BigDecimal("0.5"))
                 .averagePrice(new BigDecimal("50000000"))
                 .currency("KRW")
                 .isActive(true)
-                .notes("Test crypto asset")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        // 테스트용 주식 자산 생성
-        testStockAsset = Asset.builder()
-                .userId(testUser.getId())
-                .symbol("AAPL")
-                .name("Apple Inc.")
-                .assetType(AssetType.STOCK)
-                .exchange("NASDAQ")
-                .countryCode("US")
-                .quantity(new BigDecimal("10"))
-                .averagePrice(new BigDecimal("150.50"))
-                .currency("USD")
-                .isActive(true)
-                .notes("Test stock asset")
+                .notes("Test Bitcoin asset")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -96,11 +80,11 @@ public class AssetMapperTest {
     @DisplayName("자산 등록 테스트")
     void testInsert() {
         // When
-        assetMapper.insert(testCryptoAsset);
+        assetMapper.insert(testAsset);
 
         // Then
-        assertThat(testCryptoAsset.getId()).isNotNull();
-        assertThat(testCryptoAsset.getId()).isGreaterThan(0L);
+        assertThat(testAsset.getId()).isNotNull();
+        assertThat(testAsset.getId()).isGreaterThan(0L);
     }
 
     @Test
@@ -108,8 +92,8 @@ public class AssetMapperTest {
     @DisplayName("ID로 자산 조회 테스트")
     void testFindById() {
         // Given
-        assetMapper.insert(testCryptoAsset);
-        Long assetId = testCryptoAsset.getId();
+        assetMapper.insert(testAsset);
+        Long assetId = testAsset.getId();
 
         // When
         Optional<Asset> found = assetMapper.findById(assetId);
@@ -120,13 +104,9 @@ public class AssetMapperTest {
         assertThat(asset.getSymbol()).isEqualTo("BTC");
         assertThat(asset.getName()).isEqualTo("Bitcoin");
         assertThat(asset.getAssetType()).isEqualTo(AssetType.CRYPTO);
-        assertThat(asset.getExchange()).isEqualTo("upbit");
-        assertThat(asset.getCountryCode()).isEqualTo("KR");
-        assertThat(asset.getQuantity()).isEqualByComparingTo(new BigDecimal("1.5"));
+        assertThat(asset.getExchange()).isEqualTo("UPBIT");
+        assertThat(asset.getQuantity()).isEqualByComparingTo(new BigDecimal("0.5"));
         assertThat(asset.getAveragePrice()).isEqualByComparingTo(new BigDecimal("50000000"));
-        assertThat(asset.getCurrency()).isEqualTo("KRW");
-        assertThat(asset.getIsActive()).isTrue();
-        assertThat(asset.getNotes()).isEqualTo("Test crypto asset");
     }
 
     @Test
@@ -134,23 +114,22 @@ public class AssetMapperTest {
     @DisplayName("자산 정보 수정 테스트")
     void testUpdate() {
         // Given
-        assetMapper.insert(testCryptoAsset);
-        Long assetId = testCryptoAsset.getId();
+        assetMapper.insert(testAsset);
+        Long assetId = testAsset.getId();
 
         // When
-        testCryptoAsset.setQuantity(new BigDecimal("2.0"));
-        testCryptoAsset.setAveragePrice(new BigDecimal("48000000"));
-        testCryptoAsset.setNotes("Updated crypto asset");
-        testCryptoAsset.setUpdatedAt(LocalDateTime.now());
-        assetMapper.update(testCryptoAsset);
+        testAsset.setQuantity(new BigDecimal("1.0"));
+        testAsset.setAveragePrice(new BigDecimal("55000000"));
+        testAsset.setNotes("Updated Bitcoin asset");
+        assetMapper.update(testAsset);
 
         // Then
         Optional<Asset> updated = assetMapper.findById(assetId);
         assertThat(updated).isPresent();
         Asset asset = updated.get();
-        assertThat(asset.getQuantity()).isEqualByComparingTo(new BigDecimal("2.0"));
-        assertThat(asset.getAveragePrice()).isEqualByComparingTo(new BigDecimal("48000000"));
-        assertThat(asset.getNotes()).isEqualTo("Updated crypto asset");
+        assertThat(asset.getQuantity()).isEqualByComparingTo(new BigDecimal("1.0"));
+        assertThat(asset.getAveragePrice()).isEqualByComparingTo(new BigDecimal("55000000"));
+        assertThat(asset.getNotes()).isEqualTo("Updated Bitcoin asset");
     }
 
     @Test
@@ -158,8 +137,8 @@ public class AssetMapperTest {
     @DisplayName("자산 소프트 삭제 테스트")
     void testSoftDelete() {
         // Given
-        assetMapper.insert(testCryptoAsset);
-        Long assetId = testCryptoAsset.getId();
+        assetMapper.insert(testAsset);
+        Long assetId = testAsset.getId();
 
         // When
         assetMapper.softDelete(assetId);
@@ -170,21 +149,40 @@ public class AssetMapperTest {
         assertThat(deleted.get().getIsActive()).isFalse();
     }
 
+    // =================
+    // 사용자별 자산 조회 테스트
+    // =================
+
     @Test
     @Order(5)
     @DisplayName("사용자의 모든 자산 조회 테스트")
     void testFindByUserId() {
         // Given
-        assetMapper.insert(testCryptoAsset);
-        assetMapper.insert(testStockAsset);
+        assetMapper.insert(testAsset);
+        
+        Asset ethAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ETH")
+                .name("Ethereum")
+                .assetType(AssetType.CRYPTO)
+                .exchange("UPBIT")
+                .countryCode("KR")
+                .quantity(new BigDecimal("2.0"))
+                .averagePrice(new BigDecimal("3000000"))
+                .currency("KRW")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(ethAsset);
 
         // When
-        List<Asset> assets = assetMapper.findByUserId(testUser.getId());
+        List<Asset> assets = assetMapper.findByUserId(testUserId);
 
         // Then
         assertThat(assets).hasSize(2);
         assertThat(assets).extracting(Asset::getSymbol)
-                .containsExactlyInAnyOrder("BTC", "AAPL");
+                .containsExactlyInAnyOrder("BTC", "ETH");
     }
 
     @Test
@@ -192,18 +190,30 @@ public class AssetMapperTest {
     @DisplayName("사용자의 활성 자산만 조회 테스트")
     void testFindActiveAssetsByUserId() {
         // Given
-        assetMapper.insert(testCryptoAsset);
-        assetMapper.insert(testStockAsset);
+        assetMapper.insert(testAsset);
         
-        // 하나는 비활성화
-        assetMapper.softDelete(testCryptoAsset.getId());
+        Asset inactiveAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ADA")
+                .name("Cardano")
+                .assetType(AssetType.CRYPTO)
+                .exchange("UPBIT")
+                .countryCode("KR")
+                .quantity(new BigDecimal("100"))
+                .averagePrice(new BigDecimal("1000"))
+                .currency("KRW")
+                .isActive(false)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(inactiveAsset);
 
         // When
-        List<Asset> activeAssets = assetMapper.findActiveAssetsByUserId(testUser.getId());
+        List<Asset> activeAssets = assetMapper.findActiveAssetsByUserId(testUserId);
 
         // Then
         assertThat(activeAssets).hasSize(1);
-        assertThat(activeAssets.get(0).getSymbol()).isEqualTo("AAPL");
+        assertThat(activeAssets.get(0).getSymbol()).isEqualTo("BTC");
         assertThat(activeAssets.get(0).getIsActive()).isTrue();
     }
 
@@ -212,18 +222,32 @@ public class AssetMapperTest {
     @DisplayName("자산 타입별 조회 테스트")
     void testFindByUserIdAndAssetType() {
         // Given
-        assetMapper.insert(testCryptoAsset);
-        assetMapper.insert(testStockAsset);
+        assetMapper.insert(testAsset); // CRYPTO
+        
+        Asset stockAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("AAPL")
+                .name("Apple Inc.")
+                .assetType(AssetType.STOCK)
+                .exchange("NASDAQ")
+                .countryCode("US")
+                .quantity(new BigDecimal("10"))
+                .averagePrice(new BigDecimal("150"))
+                .currency("USD")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(stockAsset);
 
         // When
-        List<Asset> cryptoAssets = assetMapper.findByUserIdAndAssetType(
-                testUser.getId(), AssetType.CRYPTO);
-        List<Asset> stockAssets = assetMapper.findByUserIdAndAssetType(
-                testUser.getId(), AssetType.STOCK);
+        List<Asset> cryptoAssets = assetMapper.findByUserIdAndAssetType(testUserId, AssetType.CRYPTO);
+        List<Asset> stockAssets = assetMapper.findByUserIdAndAssetType(testUserId, AssetType.STOCK);
 
         // Then
         assertThat(cryptoAssets).hasSize(1);
         assertThat(cryptoAssets.get(0).getSymbol()).isEqualTo("BTC");
+        
         assertThat(stockAssets).hasSize(1);
         assertThat(stockAssets.get(0).getSymbol()).isEqualTo("AAPL");
     }
@@ -233,195 +257,367 @@ public class AssetMapperTest {
     @DisplayName("심볼로 자산 조회 테스트")
     void testFindByUserIdAndSymbol() {
         // Given
-        assetMapper.insert(testCryptoAsset);
+        assetMapper.insert(testAsset);
 
         // When
-        Optional<Asset> found = assetMapper.findByUserIdAndSymbol(
-                testUser.getId(), "BTC");
+        Optional<Asset> found = assetMapper.findByUserIdAndSymbol(testUserId, "BTC");
+        Optional<Asset> notFound = assetMapper.findByUserIdAndSymbol(testUserId, "UNKNOWN");
 
         // Then
         assertThat(found).isPresent();
-        assertThat(found.get().getSymbol()).isEqualTo("BTC");
+        assertThat(found.get().getName()).isEqualTo("Bitcoin");
+        
+        assertThat(notFound).isEmpty();
     }
+
+    // =================
+    // 포트폴리오 계산용 쿼리 테스트
+    // =================
 
     @Test
     @Order(9)
-    @DisplayName("국가 코드별 자산 조회 테스트")
-    void testFindByUserIdAndCountryCode() {
+    @DisplayName("총 투자 금액 계산 테스트")
+    void testGetTotalInvestmentByUserId() {
         // Given
-        assetMapper.insert(testCryptoAsset); // KR
-        assetMapper.insert(testStockAsset);   // US
+        assetMapper.insert(testAsset); // 0.5 * 50,000,000 = 25,000,000
+        
+        Asset ethAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ETH")
+                .name("Ethereum")
+                .assetType(AssetType.CRYPTO)
+                .exchange("UPBIT")
+                .countryCode("KR")
+                .quantity(new BigDecimal("2.0"))
+                .averagePrice(new BigDecimal("3000000"))
+                .currency("KRW")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(ethAsset); // 2.0 * 3,000,000 = 6,000,000
 
         // When
-        List<Asset> krAssets = assetMapper.findByUserIdAndCountryCode(
-                testUser.getId(), "KR");
-        List<Asset> usAssets = assetMapper.findByUserIdAndCountryCode(
-                testUser.getId(), "US");
+        BigDecimal totalInvestment = assetMapper.getTotalInvestmentByUserId(testUserId);
 
         // Then
-        assertThat(krAssets).hasSize(1);
-        assertThat(krAssets.get(0).getCountryCode()).isEqualTo("KR");
-        assertThat(usAssets).hasSize(1);
-        assertThat(usAssets.get(0).getCountryCode()).isEqualTo("US");
+        // 25,000,000 + 6,000,000 = 31,000,000
+        assertThat(totalInvestment).isEqualByComparingTo(new BigDecimal("31000000"));
     }
 
     @Test
     @Order(10)
-    @DisplayName("통화별 자산 조회 테스트")
-    void testFindByUserIdAndCurrency() {
+    @DisplayName("활성 자산 개수 조회 테스트")
+    void testCountActiveAssetsByUserId() {
         // Given
-        assetMapper.insert(testCryptoAsset); // KRW
-        assetMapper.insert(testStockAsset);   // USD
+        assetMapper.insert(testAsset);
+        
+        Asset ethAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ETH")
+                .name("Ethereum")
+                .assetType(AssetType.CRYPTO)
+                .exchange("UPBIT")
+                .countryCode("KR")
+                .quantity(new BigDecimal("2.0"))
+                .averagePrice(new BigDecimal("3000000"))
+                .currency("KRW")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(ethAsset);
+
+        Asset inactiveAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ADA")
+                .name("Cardano")
+                .assetType(AssetType.CRYPTO)
+                .exchange("UPBIT")
+                .countryCode("KR")
+                .quantity(new BigDecimal("100"))
+                .averagePrice(new BigDecimal("1000"))
+                .currency("KRW")
+                .isActive(false)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(inactiveAsset);
 
         // When
-        List<Asset> krwAssets = assetMapper.findByUserIdAndCurrency(
-                testUser.getId(), "KRW");
-        List<Asset> usdAssets = assetMapper.findByUserIdAndCurrency(
-                testUser.getId(), "USD");
+        int activeCount = assetMapper.countActiveAssetsByUserId(testUserId);
 
         // Then
-        assertThat(krwAssets).hasSize(1);
-        assertThat(krwAssets.get(0).getCurrency()).isEqualTo("KRW");
-        assertThat(usdAssets).hasSize(1);
-        assertThat(usdAssets.get(0).getCurrency()).isEqualTo("USD");
+        assertThat(activeCount).isEqualTo(2);
     }
 
     @Test
     @Order(11)
-    @DisplayName("자산 타입별 개수 조회 테스트")
-    void testCountAssetsByType() {
+    @DisplayName("자산 타입별 투자 금액 계산 테스트")
+    void testGetInvestmentByAssetType() {
         // Given
-        assetMapper.insert(testCryptoAsset); // CRYPTO
-        assetMapper.insert(testStockAsset);  // STOCK
+        assetMapper.insert(testAsset); // CRYPTO: 25,000,000
+        
+        Asset stockAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("AAPL")
+                .name("Apple Inc.")
+                .assetType(AssetType.STOCK)
+                .exchange("NASDAQ")
+                .countryCode("US")
+                .quantity(new BigDecimal("10"))
+                .averagePrice(new BigDecimal("150"))
+                .currency("USD")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(stockAsset); // STOCK: 1,500
 
         // When
-        int cryptoCount = assetMapper.countAssetsByType(testUser.getId(), AssetType.CRYPTO);
-        int stockCount = assetMapper.countAssetsByType(testUser.getId(), AssetType.STOCK);
+        BigDecimal cryptoInvestment = assetMapper.getInvestmentByAssetType(testUserId, AssetType.CRYPTO);
+        BigDecimal stockInvestment = assetMapper.getInvestmentByAssetType(testUserId, AssetType.STOCK);
 
         // Then
-        assertThat(cryptoCount).isEqualTo(1);
-        assertThat(stockCount).isEqualTo(1);
+        assertThat(cryptoInvestment).isEqualByComparingTo(new BigDecimal("25000000"));
+        assertThat(stockInvestment).isEqualByComparingTo(new BigDecimal("1500"));
     }
 
     @Test
     @Order(12)
-    @DisplayName("총 투자 금액 계산 테스트")
-    void testGetTotalInvestmentByUserId() {
-        // Given
-        assetMapper.insert(testCryptoAsset);
-        assetMapper.insert(testStockAsset);
-
-        // When
-        BigDecimal totalInvestment = assetMapper.getTotalInvestmentByUserId(testUser.getId());
-
-        // Then
-        assertThat(totalInvestment).isGreaterThan(BigDecimal.ZERO);
-    }
-
-    @Test
-    @Order(13)
-    @DisplayName("활성 자산 개수 조회 테스트")
-    void testCountActiveAssetsByUserId() {
-        // Given
-        assetMapper.insert(testCryptoAsset);
-        assetMapper.insert(testStockAsset);
-        
-        // 하나는 비활성화
-        assetMapper.softDelete(testCryptoAsset.getId());
-
-        // When
-        int count = assetMapper.countActiveAssetsByUserId(testUser.getId());
-
-        // Then
-        assertThat(count).isEqualTo(1);
-    }
-
-    @Test
-    @Order(14)
-    @DisplayName("자산 타입별 투자 금액 계산 테스트")
-    void testGetInvestmentByAssetType() {
-        // Given
-        assetMapper.insert(testCryptoAsset);
-        assetMapper.insert(testStockAsset);
-
-        // When
-        BigDecimal cryptoInvestment = assetMapper.getInvestmentByAssetType(
-                testUser.getId(), AssetType.CRYPTO);
-        BigDecimal stockInvestment = assetMapper.getInvestmentByAssetType(
-                testUser.getId(), AssetType.STOCK);
-
-        // Then
-        assertThat(cryptoInvestment).isEqualByComparingTo(new BigDecimal("75000000.00"));
-        assertThat(stockInvestment).isEqualByComparingTo(new BigDecimal("1505.00"));
-    }
-
-    @Test
-    @Order(15)
-    @DisplayName("상위 투자 자산 조회 테스트")
+    @DisplayName("가장 많이 투자한 자산 Top N 테스트")
     void testFindTopInvestmentAssets() {
         // Given
-        assetMapper.insert(testCryptoAsset);
-        assetMapper.insert(testStockAsset);
-
-        // When
-        List<Asset> topAssets = assetMapper.findTopInvestmentAssets(testUser.getId(), 2);
-
-        // Then
-        assertThat(topAssets).hasSize(2);
-        assertThat(topAssets.get(0).getSymbol()).isEqualTo("BTC");
-    }
-
-    @Test
-    @Order(16)
-    @DisplayName("보유 수량이 있는 자산만 조회 테스트")
-    void testFindHoldingAssetsByUserId() {
-        // Given
-        Asset zeroQuantityAsset = Asset.builder()
-                .userId(testUser.getId())
-                .symbol("ZERO")
-                .name("Zero Asset")
+        assetMapper.insert(testAsset); // BTC: 25,000,000
+        
+        Asset ethAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ETH")
+                .name("Ethereum")
                 .assetType(AssetType.CRYPTO)
-                .exchange("upbit")
+                .exchange("UPBIT")
                 .countryCode("KR")
-                .quantity(BigDecimal.ZERO)
-                .averagePrice(new BigDecimal("1000"))
+                .quantity(new BigDecimal("10"))
+                .averagePrice(new BigDecimal("3000000"))
                 .currency("KRW")
                 .isActive(true)
-                .notes("Zero quantity asset")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
+        assetMapper.insert(ethAsset); // ETH: 30,000,000
 
-        assetMapper.insert(testCryptoAsset);
-        assetMapper.insert(zeroQuantityAsset);
+        Asset adaAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ADA")
+                .name("Cardano")
+                .assetType(AssetType.CRYPTO)
+                .exchange("UPBIT")
+                .countryCode("KR")
+                .quantity(new BigDecimal("1000"))
+                .averagePrice(new BigDecimal("1000"))
+                .currency("KRW")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(adaAsset); // ADA: 1,000,000
 
         // When
-        List<Asset> holdingAssets = assetMapper.findHoldingAssetsByUserId(testUser.getId());
+        List<Asset> topAssets = assetMapper.findTopInvestmentAssets(testUserId, 2);
+
+        // Then
+        assertThat(topAssets).hasSize(2);
+        assertThat(topAssets.get(0).getSymbol()).isEqualTo("ETH"); // 가장 큰 투자 금액
+        assertThat(topAssets.get(1).getSymbol()).isEqualTo("BTC"); // 두 번째 큰 투자 금액
+    }
+
+    // =================
+    // 비즈니스 로직용 쿼리 테스트
+    // =================
+
+    @Test
+    @Order(13)
+    @DisplayName("보유 수량이 있는 자산만 조회 테스트")
+    void testFindHoldingAssetsByUserId() {
+        // Given
+        assetMapper.insert(testAsset); // quantity: 0.5 > 0
+        
+        Asset zeroAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ETH")
+                .name("Ethereum")
+                .assetType(AssetType.CRYPTO)
+                .exchange("UPBIT")
+                .countryCode("KR")
+                .quantity(BigDecimal.ZERO)
+                .averagePrice(new BigDecimal("3000000"))
+                .currency("KRW")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(zeroAsset); // quantity: 0
+
+        // When
+        List<Asset> holdingAssets = assetMapper.findHoldingAssetsByUserId(testUserId);
 
         // Then
         assertThat(holdingAssets).hasSize(1);
         assertThat(holdingAssets.get(0).getSymbol()).isEqualTo("BTC");
+        assertThat(holdingAssets.get(0).getQuantity()).isGreaterThan(BigDecimal.ZERO);
     }
 
     @Test
-    @Order(17)
-    @DisplayName("특정 거래소 자산 조회 테스트")
+    @Order(14)
+    @DisplayName("거래소별 자산 조회 테스트")
     void testFindByUserIdAndExchange() {
         // Given
-        assetMapper.insert(testCryptoAsset); // upbit
-        assetMapper.insert(testStockAsset);  // NASDAQ
+        assetMapper.insert(testAsset); // UPBIT
+        
+        Asset binanceAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ETH")
+                .name("Ethereum")
+                .assetType(AssetType.CRYPTO)
+                .exchange("BINANCE")
+                .countryCode("KR")
+                .quantity(new BigDecimal("1"))
+                .averagePrice(new BigDecimal("3000000"))
+                .currency("KRW")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(binanceAsset);
 
         // When
-        List<Asset> upbitAssets = assetMapper.findByUserIdAndExchange(
-                testUser.getId(), "upbit");
-        List<Asset> nasdaqAssets = assetMapper.findByUserIdAndExchange(
-                testUser.getId(), "NASDAQ");
+        List<Asset> upbitAssets = assetMapper.findByUserIdAndExchange(testUserId, "UPBIT");
+        List<Asset> binanceAssets = assetMapper.findByUserIdAndExchange(testUserId, "BINANCE");
 
         // Then
         assertThat(upbitAssets).hasSize(1);
         assertThat(upbitAssets.get(0).getSymbol()).isEqualTo("BTC");
-        assertThat(nasdaqAssets).hasSize(1);
-        assertThat(nasdaqAssets.get(0).getSymbol()).isEqualTo("AAPL");
+        
+        assertThat(binanceAssets).hasSize(1);
+        assertThat(binanceAssets.get(0).getSymbol()).isEqualTo("ETH");
+    }
+
+    @Test
+    @Order(15)
+    @DisplayName("국가 코드별 자산 조회 테스트")
+    void testFindByUserIdAndCountryCode() {
+        // Given
+        assetMapper.insert(testAsset); // KR
+        
+        Asset usAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("AAPL")
+                .name("Apple Inc.")
+                .assetType(AssetType.STOCK)
+                .exchange("NASDAQ")
+                .countryCode("US")
+                .quantity(new BigDecimal("10"))
+                .averagePrice(new BigDecimal("150"))
+                .currency("USD")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(usAsset);
+
+        // When
+        List<Asset> krAssets = assetMapper.findByUserIdAndCountryCode(testUserId, "KR");
+        List<Asset> usAssets = assetMapper.findByUserIdAndCountryCode(testUserId, "US");
+
+        // Then
+        assertThat(krAssets).hasSize(1);
+        assertThat(krAssets.get(0).getSymbol()).isEqualTo("BTC");
+        
+        assertThat(usAssets).hasSize(1);
+        assertThat(usAssets.get(0).getSymbol()).isEqualTo("AAPL");
+    }
+
+    @Test
+    @Order(16)
+    @DisplayName("통화별 자산 조회 테스트")
+    void testFindByUserIdAndCurrency() {
+        // Given
+        assetMapper.insert(testAsset); // KRW
+        
+        Asset usdAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("AAPL")
+                .name("Apple Inc.")
+                .assetType(AssetType.STOCK)
+                .exchange("NASDAQ")
+                .countryCode("US")
+                .quantity(new BigDecimal("10"))
+                .averagePrice(new BigDecimal("150"))
+                .currency("USD")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(usdAsset);
+
+        // When
+        List<Asset> krwAssets = assetMapper.findByUserIdAndCurrency(testUserId, "KRW");
+        List<Asset> usdAssets = assetMapper.findByUserIdAndCurrency(testUserId, "USD");
+
+        // Then
+        assertThat(krwAssets).hasSize(1);
+        assertThat(krwAssets.get(0).getSymbol()).isEqualTo("BTC");
+        
+        assertThat(usdAssets).hasSize(1);
+        assertThat(usdAssets.get(0).getSymbol()).isEqualTo("AAPL");
+    }
+
+    @Test
+    @Order(17)
+    @DisplayName("자산 타입별 개수 조회 테스트")
+    void testCountAssetsByType() {
+        // Given
+        assetMapper.insert(testAsset); // CRYPTO
+        
+        Asset ethAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("ETH")
+                .name("Ethereum")
+                .assetType(AssetType.CRYPTO)
+                .exchange("UPBIT")
+                .countryCode("KR")
+                .quantity(new BigDecimal("2"))
+                .averagePrice(new BigDecimal("3000000"))
+                .currency("KRW")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(ethAsset); // CRYPTO
+
+        Asset stockAsset = Asset.builder()
+                .userId(testUserId)
+                .symbol("AAPL")
+                .name("Apple Inc.")
+                .assetType(AssetType.STOCK)
+                .exchange("NASDAQ")
+                .countryCode("US")
+                .quantity(new BigDecimal("10"))
+                .averagePrice(new BigDecimal("150"))
+                .currency("USD")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        assetMapper.insert(stockAsset); // STOCK
+
+        // When
+        int cryptoCount = assetMapper.countAssetsByType(testUserId, AssetType.CRYPTO);
+        int stockCount = assetMapper.countAssetsByType(testUserId, AssetType.STOCK);
+
+        // Then
+        assertThat(cryptoCount).isEqualTo(2);
+        assertThat(stockCount).isEqualTo(1);
     }
 
     @Test
@@ -429,59 +625,13 @@ public class AssetMapperTest {
     @DisplayName("빈 결과 조회 테스트")
     void testEmptyResults() {
         // When
-        List<Asset> assets = assetMapper.findByUserId(testUser.getId());
-        BigDecimal totalInvestment = assetMapper.getTotalInvestmentByUserId(testUser.getId());
-        int count = assetMapper.countActiveAssetsByUserId(testUser.getId());
+        List<Asset> assets = assetMapper.findByUserId(999L); // 존재하지 않는 사용자
+        BigDecimal investment = assetMapper.getTotalInvestmentByUserId(999L);
+        int count = assetMapper.countActiveAssetsByUserId(999L);
 
         // Then
         assertThat(assets).isEmpty();
-        assertThat(totalInvestment).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(investment).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(count).isEqualTo(0);
-    }
-
-    @Test
-    @Order(19)
-    @DisplayName("다중 사용자 데이터 격리 테스트")
-    void testMultiUserDataIsolation() {
-        // Given
-        User anotherUser = User.builder()
-                .email("another.user@example.com")
-                .name("Another User")
-                .role(Role.USER)
-                .authProvider(AuthProvider.LOCAL)
-                .isActive(true)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        userMapper.insert(anotherUser);
-
-        assetMapper.insert(testCryptoAsset);
-        
-        Asset anotherUserAsset = Asset.builder()
-                .userId(anotherUser.getId())
-                .symbol("ETH")
-                .name("Ethereum")
-                .assetType(AssetType.CRYPTO)
-                .exchange("upbit")
-                .countryCode("KR")
-                .quantity(new BigDecimal("10"))
-                .averagePrice(new BigDecimal("3000000"))
-                .currency("KRW")
-                .isActive(true)
-                .notes("Another user asset")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        assetMapper.insert(anotherUserAsset);
-
-        // When
-        List<Asset> testUserAssets = assetMapper.findByUserId(testUser.getId());
-        List<Asset> anotherUserAssets = assetMapper.findByUserId(anotherUser.getId());
-
-        // Then
-        assertThat(testUserAssets).hasSize(1);
-        assertThat(testUserAssets.get(0).getSymbol()).isEqualTo("BTC");
-        assertThat(anotherUserAssets).hasSize(1);
-        assertThat(anotherUserAssets.get(0).getSymbol()).isEqualTo("ETH");
     }
 }

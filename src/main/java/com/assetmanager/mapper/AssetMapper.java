@@ -23,7 +23,7 @@ public interface AssetMapper {
      * 자산 등록 (새로운 필드 포함)
      */
     @Insert("INSERT INTO assets (user_id, symbol, name, asset_type, exchange, country_code, quantity, average_price, currency, is_active, notes, created_at, updated_at) " +
-            "VALUES (#{userId}, #{symbol}, #{name}, #{assetType}, #{exchange}, #{countryCode}, #{quantity}, #{averagePrice}, #{currency}, #{isActive}, #{notes}, NOW(), NOW())")
+            "VALUES (#{userId}, #{symbol}, #{name}, #{assetType}, #{exchange}, #{countryCode}, #{quantity}, #{averagePrice}, #{currency}, #{isActive}, #{notes}, #{createdAt}, #{updatedAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Asset asset);
     
