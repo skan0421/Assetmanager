@@ -1,4 +1,4 @@
-package com.assetmanager.test.controller;
+package com.assetmanager.controller;
 
 import com.assetmanager.domain.User;
 import com.assetmanager.mapper.UserMapper;
@@ -15,7 +15,7 @@ import java.util.Map;
  * 테스트용 컨트롤러
  * Phase 2.3: MyBatis 연결 테스트
  * 
- * 📂 위치: test.controller 패키지 (프로덕션 코드와 분리)
+ * 📂 위치: controller 패키지 (올바른 위치로 수정됨)
  * 🎯 목적: 개발 중 데이터베이스 연결 및 기능 테스트
  */
 @RestController
@@ -80,7 +80,7 @@ public class TestController {
         env.put("javaVersion", System.getProperty("java.version"));
         env.put("springProfile", System.getProperty("spring.profiles.active", "default"));
         env.put("osName", System.getProperty("os.name"));
-        env.put("projectStructure", "Separated test package");
+        env.put("projectStructure", "Corrected controller package");
         env.put("packageLocation", this.getClass().getPackage().getName());
         return env;
     }
