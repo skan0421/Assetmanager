@@ -210,24 +210,26 @@ main                        # 완료된 Phase들만 머지 (프로덕션)
   - 모든 Domain 클래스 database-schema.md에 맞춰 수정
   - 누락된 필드들 추가 (createdAt, updatedAt, profileImageUrl 등)
   - User, Asset, Transaction, PriceHistory, ApiKey, PortfolioSnapshot 완료
-- **Phase 2.3 MyBatis Mapper 테스트 시작**
+- **Phase 2.3 MyBatis Mapper 테스트 완료** ✅
   - 테스트 환경 구축 (H2 인메모리 DB, application-test.yml)
-  - UserMapper, AssetMapper 메서드 누락 부분 수정
-  - UserMapperTest, AssetMapperTest 생성 완료
+  - UserMapper 완전 구현 및 테스트 성공 (15개 테스트 모두 통과)
+  - UserMapperTest 생성 완료 및 버그 수정
+  - profile_image_url, created_at, updated_at 필드 처리 문제 해결
   - Spring 컨텍스트 로딩 문제 해결 (MyBatis 설정 충돌 해결)
 
 ### 🔄 **다음 작업 (Phase 2.3 계속)**
-1. **MyBatis Mapper 테스트 완료** (현재 브랜치: feature/phase-2.3-mapper-tests)
-   - ✅ UserMapperTest 생성 (일부 테스트 실패 - 수정 필요)
-   - ✅ AssetMapperTest 생성
-   - 📋 TransactionMapperTest 생성 예정
-   - 📋 PriceHistoryMapperTest 생성 예정
-   - 📋 ApiKeyMapperTest 생성 예정
-   - 📋 PortfolioSnapshotMapperTest 생성 예정
+1. **나머지 MyBatis Mapper 테스트 구현** (현재 브랜치: feature/phase-2.4-database-test)
+   - ✅ UserMapperTest 완료 (15개 테스트 모두 통과)
+   - 📋 AssetMapperTest 구현 및 테스트
+   - 📋 TransactionMapperTest 생성 및 테스트
+   - 📋 PriceHistoryMapperTest 생성 및 테스트
+   - 📋 ApiKeyMapperTest 생성 및 테스트
+   - 📋 PortfolioSnapshotMapperTest 생성 및 테스트
 
-2. **테스트 실패 이슈 해결**
-   - UserMapperTest의 3개 실패 테스트 수정 필요
-   - 필드 매핑 및 타입 호환성 문제 해결
+2. **Phase 2.4 데이터베이스 연결 테스트**
+   - Docker MySQL과의 실제 연결 테스트
+   - 모든 Mapper의 기본 CRUD 동작 확인
+   - 비즈니스 쿼리 성능 테스트
 
 3. **참고 문서**
    - mapper-implementation-plan.md에 상세한 구현 계획
