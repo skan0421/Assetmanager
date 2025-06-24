@@ -119,9 +119,9 @@ D:/jwj/Assetmanager_jwj/
 - [🔄] **2.3 MyBatis Mapper 구현**
   - [x] 테스트 구조 정리 및 패키지 구조 수정
   - [x] Mapper 구현 계획 수립 → **[mapper-implementation-plan.md](./mapper-implementation-plan.md)**
-  - [ ] **2.3.1**: UserMapper, AssetMapper, TransactionMapper 구현
-  - [ ] **2.3.2**: PriceHistoryMapper, ApiKeyMapper 구현  
-  - [ ] **2.3.3**: PortfolioSnapshotMapper 구현
+  - [x] **2.3.1**: UserMapper, AssetMapper, TransactionMapper 구현
+  - [x] **2.3.2**: PriceHistoryMapper, ApiKeyMapper 구현
+  - [x] **2.3.3**: PortfolioSnapshotMapper 구현
 
 - [ ] **2.4 데이터베이스 테스트**
   - [ ] Docker MySQL 연결 테스트
