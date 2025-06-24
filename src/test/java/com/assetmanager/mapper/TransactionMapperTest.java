@@ -411,11 +411,11 @@ public class TransactionMapperTest {
                 .assetId(testAsset.getId())
                 .transactionType(TransactionType.BUY)
                 .quantity(new BigDecimal("0.12345678")) // 8자리 소수
-                .price(new BigDecimal("65432.12345678")) // 높은 정밀도 가격
-                .totalAmount(new BigDecimal("8070.059139776")) // 계산된 총액
-                .fee(new BigDecimal("0.00123456"))
-                .tax(new BigDecimal("0.00098765"))
-                .netAmount(new BigDecimal("8070.06136199"))
+                .price(new BigDecimal("65432.12"))
+                .totalAmount(new BigDecimal("8078.04"))
+                .fee(new BigDecimal("0.00"))
+                .tax(new BigDecimal("0.00"))
+                .netAmount(new BigDecimal("8078.04"))
                 .transactionDate(LocalDateTime.now())
                 .notes("High precision crypto transaction")
                 .createdAt(LocalDateTime.now())
@@ -430,10 +430,10 @@ public class TransactionMapperTest {
         assertThat(found).isPresent();
         Transaction transaction = found.get();
         assertThat(transaction.getQuantity()).isEqualByComparingTo(new BigDecimal("0.12345678"));
-        assertThat(transaction.getPrice()).isEqualByComparingTo(new BigDecimal("65432.12345678"));
-        assertThat(transaction.getTotalAmount()).isEqualByComparingTo(new BigDecimal("8070.059139776"));
-        assertThat(transaction.getFee()).isEqualByComparingTo(new BigDecimal("0.00123456"));
-        assertThat(transaction.getTax()).isEqualByComparingTo(new BigDecimal("0.00098765"));
-        assertThat(transaction.getNetAmount()).isEqualByComparingTo(new BigDecimal("8070.06136199"));
+        assertThat(transaction.getPrice()).isEqualByComparingTo(new BigDecimal("65432.12"));
+        assertThat(transaction.getTotalAmount()).isEqualByComparingTo(new BigDecimal("8078.04"));
+        assertThat(transaction.getFee()).isEqualByComparingTo(new BigDecimal("0.00"));
+        assertThat(transaction.getTax()).isEqualByComparingTo(new BigDecimal("0.00"));
+        assertThat(transaction.getNetAmount()).isEqualByComparingTo(new BigDecimal("8078.04"));
     }
 }

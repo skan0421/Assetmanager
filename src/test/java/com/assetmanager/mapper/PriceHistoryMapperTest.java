@@ -82,4 +82,65 @@ public class PriceHistoryMapperTest {
         Optional<PriceHistory> deleted = priceHistoryMapper.findById(id);
         assertThat(deleted).isEmpty();
     }
+
+    @Test
+    @Order(4)
+    @DisplayName("심볼별 최신 가격 조회 테스트")
+    void testFindLatestBySymbol() {
+        priceHistoryMapper.insert(history);
+
+        PriceHistory newer = PriceHistory.builder()
+                .symbol("BTC")
+                .exchange("UPBIT")
+                .price(new BigDecimal("96000000"))
+                .volume(new BigDecimal("1.2"))
+                .marketCap(new BigDecimal("2100000000"))
+                .highPrice(new BigDecimal("96500000"))
+                .lowPrice(new BigDecimal("95500000"))
+                .openPrice(new BigDecimal("96000000"))
+                .closePrice(new BigDecimal("96200000"))
+                .changeRate(new BigDecimal("0.3"))
+                .dataSource("UPBIT")
+                .priceTimestamp(LocalDateTime.now())
+                .build();
+        priceHistoryMapper.insert(newer);
+
+        Optional<PriceHistory> latest = priceHistoryMapper.findLatestBySymbol("BTC");
+        assertThat(latest).isPresent();
+        assertThat(latest.get().getPrice()).isEqualByComparingTo(new BigDecimal("96000000"));
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("기간별 가격 데이터 조회 테스트")
+    void testFindByDateRangeAndStats() {
+        LocalDateTime now = LocalDateTime.now();
+
+        history.setPriceTimestamp(now.minusHours(2));
+        priceHistoryMapper.insert(history);
+
+        PriceHistory second = PriceHistory.builder()
+                .symbol("BTC")
+                .exchange("UPBIT")
+                .price(new BigDecimal("96000000"))
+                .volume(new BigDecimal("1.2"))
+                .marketCap(new BigDecimal("2100000000"))
+                .highPrice(new BigDecimal("96500000"))
+                .lowPrice(new BigDecimal("95500000"))
+                .openPrice(new BigDecimal("96000000"))
+                .closePrice(new BigDecimal("96200000"))
+                .changeRate(new BigDecimal("0.3"))
+                .dataSource("UPBIT")
+                .priceTimestamp(now.minusHours(1))
+                .build();
+        priceHistoryMapper.insert(second);
+
+        BigDecimal max = priceHistoryMapper.getMaxPriceInPeriod("BTC", now.minusHours(3), now);
+        BigDecimal avg = priceHistoryMapper.getAveragePriceInPeriod("BTC", now.minusHours(3), now);
+
+        assertThat(max).isEqualByComparingTo(new BigDecimal("96000000"));
+        assertThat(avg).isPositive();
+
+        assertThat(priceHistoryMapper.findBySymbolAndDateRange("BTC", now.minusHours(3), now)).hasSize(2);
+    }
 }

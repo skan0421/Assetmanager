@@ -97,4 +97,63 @@ public class PortfolioSnapshotMapperTest {
         Optional<PortfolioSnapshot> deleted = snapshotMapper.findById(id);
         assertThat(deleted).isEmpty();
     }
+
+    @Test
+    @Order(4)
+    @DisplayName("사용자별 스냅샷 조회 테스트")
+    void testFindByUser() {
+        snapshotMapper.insert(snapshot);
+
+        PortfolioSnapshot second = PortfolioSnapshot.builder()
+                .userId(user.getId())
+                .snapshotDate(LocalDate.now().minusDays(1))
+                .totalInvestment(new BigDecimal("9000"))
+                .totalCurrentValue(new BigDecimal("9500"))
+                .totalProfitLoss(new BigDecimal("500"))
+                .profitRate(new BigDecimal("5.55"))
+                .assetCount(1)
+                .cryptoValue(new BigDecimal("5000"))
+                .stockValue(new BigDecimal("4500"))
+                .createdAt(LocalDateTime.now())
+                .build();
+        snapshotMapper.insert(second);
+
+        assertThat(snapshotMapper.findByUserId(user.getId())).hasSize(2);
+        assertThat(snapshotMapper.findLatestByUserId(user.getId())).isPresent();
+        assertThat(snapshotMapper.findByUserIdAndDate(user.getId(), LocalDate.now())).isPresent();
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("스냅샷 통계 조회 테스트")
+    void testSnapshotStatistics() {
+        LocalDate today = LocalDate.now();
+
+        PortfolioSnapshot older = PortfolioSnapshot.builder()
+                .userId(user.getId())
+                .snapshotDate(today.minusDays(2))
+                .totalInvestment(new BigDecimal("8000"))
+                .totalCurrentValue(new BigDecimal("9000"))
+                .totalProfitLoss(new BigDecimal("1000"))
+                .profitRate(new BigDecimal("12.5"))
+                .assetCount(1)
+                .cryptoValue(new BigDecimal("9000"))
+                .stockValue(BigDecimal.ZERO)
+                .createdAt(LocalDateTime.now())
+                .build();
+        snapshotMapper.insert(older);
+
+        snapshotMapper.insert(snapshot); // today snapshot
+
+        BigDecimal maxRate = snapshotMapper.getMaxProfitRateInPeriod(user.getId(), today.minusDays(3), today.plusDays(1));
+        BigDecimal avgRate = snapshotMapper.getAverageProfitRateInPeriod(user.getId(), today.minusDays(3), today.plusDays(1));
+        BigDecimal maxValue = snapshotMapper.getMaxPortfolioValue(user.getId());
+
+        assertThat(maxRate).isPositive();
+        assertThat(avgRate).isPositive();
+        assertThat(maxValue).isEqualByComparingTo(new BigDecimal("12000"));
+
+        assertThat(snapshotMapper.countProfitDays(user.getId())).isGreaterThanOrEqualTo(1);
+        assertThat(snapshotMapper.countLossDays(user.getId())).isGreaterThanOrEqualTo(0);
+    }
 }

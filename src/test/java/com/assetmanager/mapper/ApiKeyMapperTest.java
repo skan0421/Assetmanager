@@ -95,4 +95,61 @@ public class ApiKeyMapperTest {
         assertThat(deactivated).isPresent();
         assertThat(deactivated.get().getIsActive()).isFalse();
     }
+
+    @Test
+    @Order(4)
+    @DisplayName("사용자별 API 키 조회 테스트")
+    void testFindByUserQueries() {
+        apiKeyMapper.insert(apiKey);
+
+        ApiKey second = ApiKey.builder()
+                .userId(user.getId())
+                .exchangeType(ExchangeType.KIWOOM)
+                .exchangeName("Kiwoom")
+                .accessKey("a2")
+                .secretKey("s2")
+                .apiPermissions("read,trade")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        apiKeyMapper.insert(second);
+
+        assertThat(apiKeyMapper.findByUserId(user.getId())).hasSize(2);
+        assertThat(apiKeyMapper.findActiveApiKeysByUserId(user.getId())).hasSize(2);
+
+        Optional<ApiKey> byType = apiKeyMapper.findByUserIdAndExchangeType(user.getId(), ExchangeType.UPBIT);
+        assertThat(byType).isPresent();
+
+        Optional<ApiKey> byName = apiKeyMapper.findByUserIdAndExchangeName(user.getId(), "Kiwoom");
+        assertThat(byName).isPresent();
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("API 키 상태 및 통계 테스트")
+    void testStatusAndStats() {
+        apiKeyMapper.insert(apiKey);
+
+        ApiKey stockKey = ApiKey.builder()
+                .userId(user.getId())
+                .exchangeType(ExchangeType.KIWOOM)
+                .exchangeName("Kiwoom")
+                .accessKey("a2")
+                .secretKey("s2")
+                .apiPermissions("trade")
+                .isActive(true)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        apiKeyMapper.insert(stockKey);
+
+        apiKeyMapper.updateLastUsed(apiKey.getId());
+        apiKeyMapper.updateActiveStatus(stockKey.getId(), false);
+
+        assertThat(apiKeyMapper.countActiveApiKeysByUserId(user.getId())).isEqualTo(1);
+        assertThat(apiKeyMapper.findCryptoApiKeysByUserId(user.getId())).hasSize(1);
+        assertThat(apiKeyMapper.findStockApiKeysByUserId(user.getId())).hasSize(1);
+        assertThat(apiKeyMapper.findAllActiveExchanges()).contains("Upbit");
+    }
 }
