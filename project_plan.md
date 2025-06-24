@@ -88,6 +88,12 @@ D:/jwj/Assetmanager_jwj/
   - 비즈니스 로직 메서드
   - MyBatis Mapper 인터페이스
 
+### 🗺️ Mapper 구현 계획
+- **[mapper-implementation-plan.md](./mapper-implementation-plan.md)** - MyBatis Mapper 구현 계획 ✨ **NEW**
+  - 6개 Mapper 상세 구현 계획
+  - 우선순위 및 구현 가이드라인
+  - 성능 및 보안 고려사항
+
 ---
 
 ## 🚀 **개발 Phase 순서**
@@ -106,19 +112,21 @@ D:/jwj/Assetmanager_jwj/
 
 - [x] **2.2 Domain 모델 구현**
   - [x] User, Asset, Transaction, PriceHistory 도메인 클래스
+  - [x] ApiKey, PortfolioSnapshot 도메인 클래스
   - [x] 비즈니스 로직 메서드 구현
   - [x] AuthProvider, Role, AssetType 등 Enum 클래스
 
 - [🔄] **2.3 MyBatis Mapper 구현**
-  - [x] mybatis-config.xml 설정 수정 (Enum 경로 문제 해결)
-  - [x] UserMapper 인터페이스 (기본 CRUD)
-  - [x] TestController (데이터베이스 연결 테스트용)
-  - [ ] AssetMapper, TransactionMapper 인터페이스
-  - [ ] XML 매퍼 파일 작성
+  - [x] 테스트 구조 정리 및 패키지 구조 수정
+  - [x] Mapper 구현 계획 수립 → **[mapper-implementation-plan.md](./mapper-implementation-plan.md)**
+  - [ ] **2.3.1**: UserMapper, AssetMapper, TransactionMapper 구현
+  - [ ] **2.3.2**: PriceHistoryMapper, ApiKeyMapper 구현  
+  - [ ] **2.3.3**: PortfolioSnapshotMapper 구현
 
 - [ ] **2.4 데이터베이스 테스트**
   - [ ] Docker MySQL 연결 테스트
-  - [ ] 기본 CRUD 동작 확인
+  - [ ] 각 Mapper별 기본 CRUD 동작 확인
+  - [ ] 비즈니스 쿼리 테스트
 
 ### **🔐 Phase 3: 인증 및 보안 시스템** 📋
 - [ ] Spring Security + JWT 구현
