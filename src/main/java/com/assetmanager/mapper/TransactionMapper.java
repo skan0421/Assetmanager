@@ -24,9 +24,9 @@ public interface TransactionMapper {
      * 거래 내역 등록
      */
     @Insert("INSERT INTO transactions (user_id, asset_id, transaction_type, quantity, price, " +
-            "total_amount, fee, tax, net_amount, transaction_date, notes, external_id, created_at) " +
+            "total_amount, fee, tax, net_amount, transaction_date, notes, external_id, created_at, updated_at) " +
             "VALUES (#{userId}, #{assetId}, #{transactionType}, #{quantity}, #{price}, " +
-            "#{totalAmount}, #{fee}, #{tax}, #{netAmount}, #{transactionDate}, #{notes}, #{externalId}, NOW())")
+            "#{totalAmount}, #{fee}, #{tax}, #{netAmount}, #{transactionDate}, #{notes}, #{externalId}, #{createdAt}, #{updatedAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Transaction transaction);
     
@@ -42,7 +42,7 @@ public interface TransactionMapper {
     @Update("UPDATE transactions SET quantity = #{quantity}, price = #{price}, " +
             "total_amount = #{totalAmount}, fee = #{fee}, tax = #{tax}, net_amount = #{netAmount}, " +
             "transaction_date = #{transactionDate}, notes = #{notes}, external_id = #{externalId}, " +
-            "updated_at = NOW() WHERE id = #{id}")
+            "updated_at = #{updatedAt} WHERE id = #{id}")
     void update(Transaction transaction);
     
     /**
