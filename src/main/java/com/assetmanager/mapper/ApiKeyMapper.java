@@ -111,15 +111,21 @@ public interface ApiKeyMapper {
     List<String> findAllActiveExchanges();
 
     // =================
-    // 권한 관리
+    // 권한 관리 (문자열 기반)
     // =================
 
+    /**
+     * 거래 권한이 있는 API 키 조회
+     */
     @Select("SELECT id, user_id, exchange_type, exchange_name, access_key, secret_key, api_permissions, is_active, last_used_at AS lastUsedAt, expires_at AS expiresAt " +
-            "FROM api_keys WHERE user_id = #{userId} AND JSON_CONTAINS(api_permissions, '"trade"')")
+            "FROM api_keys WHERE user_id = #{userId} AND (api_permissions LIKE '%trade%' OR api_permissions = 'trade')")
     List<ApiKey> findTradingApiKeysByUserId(Long userId);
 
+    /**
+     * 읽기 전용 API 키 조회
+     */
     @Select("SELECT id, user_id, exchange_type, exchange_name, access_key, secret_key, api_permissions, is_active, last_used_at AS lastUsedAt, expires_at AS expiresAt " +
-            "FROM api_keys WHERE user_id = #{userId} AND NOT JSON_CONTAINS(api_permissions, '"trade"')")
+            "FROM api_keys WHERE user_id = #{userId} AND (api_permissions NOT LIKE '%trade%' AND api_permissions LIKE '%read%')")
     List<ApiKey> findReadOnlyApiKeysByUserId(Long userId);
 
     // =================

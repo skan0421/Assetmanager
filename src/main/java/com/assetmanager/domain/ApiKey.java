@@ -1,7 +1,9 @@
 package com.assetmanager.domain;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import lombok.AllArgsConstructor;
@@ -22,7 +24,7 @@ public class ApiKey {
     private String exchangeName;
     private String accessKey;
     private String secretKey;
-    private Set<String> apiPermissions;
+    private String apiPermissions; // JSON 문자열로 저장 (ex: "read,trade")
     private Boolean isActive;
     private LocalDateTime lastUsedAt;
     private LocalDateTime expiresAt;
@@ -44,10 +46,10 @@ public class ApiKey {
     }
 
     public boolean hasPermission(String permission) {
-        if (apiPermissions == null) {
+        if (apiPermissions == null || apiPermissions.isEmpty()) {
             return false;
         }
-        return apiPermissions.contains(permission);
+        return getApiPermissionsSet().contains(permission);
     }
 
     public boolean canTrade() {
@@ -66,7 +68,24 @@ public class ApiKey {
         return exchangeType == ExchangeType.STOCK;
     }
 
-    public Set<String> getApiPermissions() {
-        return apiPermissions == null ? Collections.emptySet() : apiPermissions;
+    /**
+     * 문자열로 저장된 권한을 Set으로 변환
+     */
+    public Set<String> getApiPermissionsSet() {
+        if (apiPermissions == null || apiPermissions.trim().isEmpty()) {
+            return Collections.emptySet();
+        }
+        return new HashSet<>(Arrays.asList(apiPermissions.split(",")));
+    }
+    
+    /**
+     * Set 권한을 문자열로 변환하여 저장
+     */
+    public void setApiPermissionsSet(Set<String> permissions) {
+        if (permissions == null || permissions.isEmpty()) {
+            this.apiPermissions = "";
+        } else {
+            this.apiPermissions = String.join(",", permissions);
+        }
     }
 }
