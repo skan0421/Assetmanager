@@ -61,11 +61,11 @@ public class ApiKey {
     }
 
     public boolean isCryptoExchange() {
-        return exchangeType == ExchangeType.CRYPTO;
+        return exchangeType == ExchangeType.UPBIT || exchangeType == ExchangeType.BITHUMB;
     }
 
     public boolean isStockBroker() {
-        return exchangeType == ExchangeType.STOCK;
+        return exchangeType == ExchangeType.KIWOOM || exchangeType == ExchangeType.KIS;
     }
 
     /**

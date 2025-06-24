@@ -25,7 +25,10 @@ public class Transaction {
     private BigDecimal totalAmount;
     private BigDecimal fee;
     private BigDecimal tax;
-    private LocalDateTime transactedAt;
+    private BigDecimal netAmount;
+    private LocalDateTime transactionDate;
+    private String notes;
+    private String externalId;
 
     public BigDecimal calculateNetAmount() {
         BigDecimal net = totalAmount;

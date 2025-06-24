@@ -1,6 +1,8 @@
 package com.assetmanager.domain;
 
 public enum ExchangeType {
-    CRYPTO,
-    STOCK
+    UPBIT,
+    BITHUMB,
+    KIWOOM,
+    KIS
 }

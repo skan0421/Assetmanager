@@ -100,11 +100,11 @@ public interface ApiKeyMapper {
     // =================
 
     @Select("SELECT id, user_id, exchange_type, exchange_name, access_key, secret_key, api_permissions, is_active, last_used_at AS lastUsedAt, expires_at AS expiresAt " +
-            "FROM api_keys WHERE user_id = #{userId} AND exchange_type = 'CRYPTO'")
+            "FROM api_keys WHERE user_id = #{userId} AND exchange_type IN ('UPBIT','BITHUMB')")
     List<ApiKey> findCryptoApiKeysByUserId(Long userId);
 
     @Select("SELECT id, user_id, exchange_type, exchange_name, access_key, secret_key, api_permissions, is_active, last_used_at AS lastUsedAt, expires_at AS expiresAt " +
-            "FROM api_keys WHERE user_id = #{userId} AND exchange_type = 'STOCK'")
+            "FROM api_keys WHERE user_id = #{userId} AND exchange_type IN ('KIWOOM','KIS')")
     List<ApiKey> findStockApiKeysByUserId(Long userId);
 
     @Select("SELECT DISTINCT exchange_name FROM api_keys WHERE is_active = true")

@@ -21,11 +21,13 @@ public class PriceHistory {
     private String exchange;
     private BigDecimal price;
     private BigDecimal volume;
+    private BigDecimal marketCap;
     private BigDecimal highPrice;
     private BigDecimal lowPrice;
     private BigDecimal openPrice;
     private BigDecimal closePrice;
     private BigDecimal changeRate;
+    private String dataSource;
     private LocalDateTime timestamp;
 
     public boolean hasPriceChanged() {

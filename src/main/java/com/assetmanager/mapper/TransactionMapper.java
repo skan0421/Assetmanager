@@ -24,9 +24,9 @@ public interface TransactionMapper {
      * 거래 내역 등록
      */
     @Insert("INSERT INTO transactions (user_id, asset_id, transaction_type, quantity, price, " +
-            "total_amount, fee, tax, transacted_at, created_at) " +
+            "total_amount, fee, tax, net_amount, transaction_date, notes, external_id, created_at) " +
             "VALUES (#{userId}, #{assetId}, #{transactionType}, #{quantity}, #{price}, " +
-            "#{totalAmount}, #{fee}, #{tax}, #{transactedAt}, NOW())")
+            "#{totalAmount}, #{fee}, #{tax}, #{netAmount}, #{transactionDate}, #{notes}, #{externalId}, NOW())")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Transaction transaction);
     
@@ -40,7 +40,8 @@ public interface TransactionMapper {
      * 거래 내역 수정 (가격, 수수료 등 수정 가능)
      */
     @Update("UPDATE transactions SET quantity = #{quantity}, price = #{price}, " +
-            "total_amount = #{totalAmount}, fee = #{fee}, tax = #{tax}, " +
+            "total_amount = #{totalAmount}, fee = #{fee}, tax = #{tax}, net_amount = #{netAmount}, " +
+            "transaction_date = #{transactionDate}, notes = #{notes}, external_id = #{externalId}, " +
             "updated_at = NOW() WHERE id = #{id}")
     void update(Transaction transaction);
     
@@ -58,14 +59,14 @@ public interface TransactionMapper {
      * 사용자의 모든 거래 내역 조회 (최신순)
      */
     @Select("SELECT * FROM transactions WHERE user_id = #{userId} " +
-            "ORDER BY transacted_at DESC, created_at DESC")
+            "ORDER BY transaction_date DESC, created_at DESC")
     List<Transaction> findByUserId(Long userId);
     
     /**
      * 사용자의 거래 내역 페이징 조회
      */
     @Select("SELECT * FROM transactions WHERE user_id = #{userId} " +
-            "ORDER BY transacted_at DESC, created_at DESC " +
+            "ORDER BY transaction_date DESC, created_at DESC " +
             "LIMIT #{limit} OFFSET #{offset}")
     List<Transaction> findByUserIdWithPaging(@Param("userId") Long userId,
                                            @Param("limit") int limit,
@@ -75,7 +76,7 @@ public interface TransactionMapper {
      * 특정 자산의 거래 내역 조회
      */
     @Select("SELECT * FROM transactions WHERE user_id = #{userId} AND asset_id = #{assetId} " +
-            "ORDER BY transacted_at DESC")
+            "ORDER BY transaction_date DESC")
     List<Transaction> findByUserIdAndAssetId(@Param("userId") Long userId,
                                           @Param("assetId") Long assetId);
     
@@ -84,7 +85,7 @@ public interface TransactionMapper {
      */
     @Select("SELECT * FROM transactions WHERE user_id = #{userId} " +
             "AND transaction_type = #{transactionType} " +
-            "ORDER BY transacted_at DESC")
+            "ORDER BY transaction_date DESC")
     List<Transaction> findByUserIdAndTransactionType(@Param("userId") Long userId,
                                                    @Param("transactionType") TransactionType transactionType);
     
@@ -96,8 +97,8 @@ public interface TransactionMapper {
      * 특정 기간의 거래 내역 조회
      */
     @Select("SELECT * FROM transactions WHERE user_id = #{userId} " +
-            "AND transacted_at BETWEEN #{startDate} AND #{endDate} " +
-            "ORDER BY transacted_at DESC")
+            "AND transaction_date BETWEEN #{startDate} AND #{endDate} " +
+            "ORDER BY transaction_date DESC")
     List<Transaction> findByUserIdAndDateRange(@Param("userId") Long userId,
                                              @Param("startDate") LocalDateTime startDate,
                                              @Param("endDate") LocalDateTime endDate);
@@ -106,8 +107,8 @@ public interface TransactionMapper {
      * 최근 N일간의 거래 내역 조회
      */
     @Select("SELECT * FROM transactions WHERE user_id = #{userId} " +
-            "AND transacted_at >= #{fromDate} " +
-            "ORDER BY transacted_at DESC")
+            "AND transaction_date >= #{fromDate} " +
+            "ORDER BY transaction_date DESC")
     List<Transaction> findRecentTransactions(@Param("userId") Long userId,
                                            @Param("fromDate") LocalDateTime fromDate);
     
@@ -158,12 +159,12 @@ public interface TransactionMapper {
      * 월별 거래 통계
      */
     @Select("SELECT " +
-            "DATE_FORMAT(transacted_at, '%Y-%m') as month, " +
+            "DATE_FORMAT(transaction_date, '%Y-%m') as month, " +
             "COUNT(*) as transaction_count, " +
             "SUM(total_amount) as total_amount " +
             "FROM transactions " +
             "WHERE user_id = #{userId} " +
-            "GROUP BY DATE_FORMAT(transacted_at, '%Y-%m') " +
+            "GROUP BY DATE_FORMAT(transaction_date, '%Y-%m') " +
             "ORDER BY month DESC")
     List<Object> getMonthlyTransactionStats(Long userId);
     
@@ -175,7 +176,7 @@ public interface TransactionMapper {
      * 최근 거래 내역 N개 조회
      */
     @Select("SELECT * FROM transactions WHERE user_id = #{userId} " +
-            "ORDER BY transacted_at DESC, created_at DESC LIMIT #{limit}")
+            "ORDER BY transaction_date DESC, created_at DESC LIMIT #{limit}")
     List<Transaction> findRecentTransactionsByUserId(@Param("userId") Long userId,
                                                    @Param("limit") int limit);
     
@@ -183,7 +184,7 @@ public interface TransactionMapper {
      * 특정 자산의 최근 거래 조회
      */
     @Select("SELECT * FROM transactions WHERE asset_id = #{assetId} " +
-            "ORDER BY transacted_at DESC LIMIT #{limit}")
+            "ORDER BY transaction_date DESC LIMIT #{limit}")
     List<Transaction> findRecentTransactionsByAssetId(@Param("assetId") Long assetId,
                                                     @Param("limit") int limit);
 }
