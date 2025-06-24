@@ -57,28 +57,26 @@ CREATE TABLE IF NOT EXISTS assets (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='보유 자산 정보 테이블';
 
 -- 3. 거래 내역 테이블 (transactions)
-CREATE TABLE IF NOT EXISTS transactions (
+CREATE TABLE transactions (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '거래 고유 ID',
     user_id BIGINT NOT NULL COMMENT '사용자 ID (FK)',
     asset_id BIGINT NOT NULL COMMENT '자산 ID (FK)',
     transaction_type ENUM('BUY', 'SELL', 'DIVIDEND', 'SPLIT') NOT NULL COMMENT '거래 유형',
     quantity DECIMAL(18,8) NOT NULL COMMENT '거래 수량',
-    price DECIMAL(18,2) NOT NULL COMMENT '거래 단가',
-    total_amount DECIMAL(18,2) NOT NULL COMMENT '거래 총액 (수량 × 단가)',
-    fee DECIMAL(18,2) DEFAULT 0 COMMENT '거래 수수료',
-    tax DECIMAL(18,2) DEFAULT 0 COMMENT '세금',
-    net_amount DECIMAL(18,2) NOT NULL COMMENT '실제 거래금액 (총액 ± 수수료 ± 세금)',
+    price DECIMAL(18,8) NOT NULL COMMENT '거래 단가',
+    total_amount DECIMAL(24,10) NOT NULL COMMENT '거래 총액',
+    fee DECIMAL(18,8) DEFAULT 0 COMMENT '수수료',
+    tax DECIMAL(18,8) DEFAULT 0 COMMENT '세금',
+    net_amount DECIMAL(24,10) NOT NULL COMMENT '실제 거래금액',
     transaction_date TIMESTAMP NOT NULL COMMENT '거래 일시',
-    notes TEXT NULL COMMENT '거래 메모',
-    external_id VARCHAR(100) NULL COMMENT '외부 시스템 거래 ID',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '기록 생성 시간',
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '기록 수정 시간',
-    
-    -- 외래키
+    notes TEXT NULL COMMENT '메모',
+    external_id VARCHAR(100) NULL COMMENT '외부 ID',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '생성 시간',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정 시간',
+
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE,
-    
-    -- 인덱스
+
     INDEX idx_user_id (user_id),
     INDEX idx_asset_id (asset_id),
     INDEX idx_transaction_type (transaction_type),
@@ -86,7 +84,8 @@ CREATE TABLE IF NOT EXISTS transactions (
     INDEX idx_user_date (user_id, transaction_date),
     INDEX idx_asset_date (asset_id, transaction_date),
     INDEX idx_external_id (external_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='거래 내역 테이블';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='거래 내역 테이블 (정밀도 개선)';
+
 
 -- 4. 가격 히스토리 테이블 (price_history)
 CREATE TABLE IF NOT EXISTS price_history (

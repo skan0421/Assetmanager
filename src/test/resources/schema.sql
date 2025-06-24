@@ -46,18 +46,21 @@ CREATE TABLE transactions (
     user_id BIGINT NOT NULL,
     asset_id BIGINT NOT NULL,
     transaction_type VARCHAR(20) NOT NULL,
+    
+    -- 💡 정밀도 확장된 컬럼들
     quantity DECIMAL(18,8) NOT NULL,
-    price DECIMAL(18,2) NOT NULL,
-    total_amount DECIMAL(18,2) NOT NULL,
-    fee DECIMAL(18,2) DEFAULT 0,
-    tax DECIMAL(18,2) DEFAULT 0,
-    net_amount DECIMAL(18,2) NOT NULL,
+    price DECIMAL(18,8) NOT NULL,
+    total_amount DECIMAL(24,10) NOT NULL,
+    fee DECIMAL(18,8) DEFAULT 0,
+    tax DECIMAL(18,8) DEFAULT 0,
+    net_amount DECIMAL(24,10) NOT NULL,
+
     transaction_date TIMESTAMP NOT NULL,
     notes TEXT NULL,
     external_id VARCHAR(100) NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
     -- 외래키
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE
