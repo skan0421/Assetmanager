@@ -22,8 +22,8 @@ public interface UserMapper {
     /**
      * 사용자 등록
      */
-    @Insert("INSERT INTO users (email, password, name, auth_provider, role, is_active, created_at, updated_at) " +
-            "VALUES (#{email}, #{password}, #{name}, #{authProvider}, #{role}, #{isActive}, NOW(), NOW())")
+    @Insert("INSERT INTO users (email, password, name, auth_provider, role, is_active, profile_image_url, last_login_at, created_at, updated_at) " +
+            "VALUES (#{email}, #{password}, #{name}, #{authProvider}, #{role}, #{isActive}, #{profileImageUrl}, #{lastLoginAt}, #{createdAt}, #{updatedAt})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(User user);
     
@@ -42,7 +42,7 @@ public interface UserMapper {
     /**
      * 사용자 정보 수정
      */
-    @Update("UPDATE users SET name = #{name}, updated_at = NOW() WHERE id = #{id}")
+    @Update("UPDATE users SET name = #{name}, profile_image_url = #{profileImageUrl}, updated_at = NOW() WHERE id = #{id}")
     void update(User user);
     
     /**
