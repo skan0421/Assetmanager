@@ -199,7 +199,6 @@ public class PortfolioSnapshotMapperTest {
         // Given
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1);
-        LocalDate twoDaysAgo = today.minusDays(2);
         LocalDate threeDaysAgo = today.minusDays(3);
 
         // 어제와 오늘 스냅샷 생성

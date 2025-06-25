@@ -1,5 +1,5 @@
 spring:
-  # MySQL 테스트 환경 설정
+  # MySQL 통합 테스트 설정
   datasource:
     url: jdbc:mysql://localhost:3306/assetmanager
     username: assetmanager
@@ -9,13 +9,20 @@ spring:
       maximum-pool-size: 10
       minimum-idle: 2
       connection-timeout: 20000
+      idle-timeout: 300000
+      max-lifetime: 1200000
 
-  # 스키마 초기화 설정
-  sql:
-    init:
-      mode: never
-      schema-locations: classpath:schema.sql
-      continue-on-error: false
+  # Redis 설정 (테스트용)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 4
+          max-idle: 4
+          min-idle: 0
 
 # MyBatis 설정
 mybatis:
@@ -24,12 +31,24 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
-# 로깅 설정 (상세한 SQL 로그)
+# PageHelper 설정 (MySQL 전용)
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+# 로깅 설정 (테스트용)
 logging:
   level:
+    com.assetmanager: DEBUG
     com.assetmanager.mapper: DEBUG
-    org.springframework.jdbc: DEBUG
-    org.springframework.transaction: DEBUG
     org.mybatis: DEBUG
+    org.springframework.test: INFO
+    org.junit: INFO
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# 테스트 환경 설정
+server:
+  port: 0  # 랜덤 포트 사용
