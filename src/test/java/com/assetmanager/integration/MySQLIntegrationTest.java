@@ -170,6 +170,7 @@ class MySQLIntegrationTest {
                 .price(BigDecimal.valueOf(50000.00))
                 .totalAmount(BigDecimal.valueOf(5000.00))
                 .fee(BigDecimal.valueOf(25.00))
+                .netAmount(BigDecimal.valueOf(4975.00))
                 .transactionDate(LocalDateTime.now())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -206,7 +207,8 @@ class MySQLIntegrationTest {
                 .exchange("UPBIT")
                 .price(BigDecimal.valueOf(51000.00))
                 .volume(BigDecimal.valueOf(1000.0))
-                .priceTimestamp(LocalDateTime.now())
+                .dataSource("UPBIT")
+                .priceTimestamp(LocalDateTime.now().plusNanos(System.nanoTime() % 1_000_000))
                 .createdAt(LocalDateTime.now())
                 .build();
 
@@ -243,6 +245,7 @@ class MySQLIntegrationTest {
         ApiKey apiKey = ApiKey.builder()
                 .userId(savedUserId)
                 .exchangeType(ExchangeType.UPBIT)
+                .exchangeName("UPBIT")
                 .accessKey("test-access-key")
                 .secretKey("test-secret-key")
                 .isActive(true)
