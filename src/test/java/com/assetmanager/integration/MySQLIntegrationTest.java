@@ -39,33 +39,44 @@ class MySQLIntegrationTest {
 
     @BeforeAll
     void setUp() {
-        testUser = User.builder()
-                .email("test@mysql.com")
-                .password("password123")
-                .name("MySQL Test User")
-                .authProvider(AuthProvider.LOCAL)
-                .role(Role.USER)
-                .isActive(true)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        userMapper.insert(testUser);
+        // 이전 테스트 실행으로 남아있을 수 있는 데이터를 확인하여 중복 삽입을 방지한다.
+        Optional<User> existingUserOpt = userMapper.findByEmail("test@mysql.com");
+        if (existingUserOpt.isPresent()) {
+            testUser = existingUserOpt.get();
+        } else {
+            testUser = User.builder()
+                    .email("test@mysql.com")
+                    .password("password123")
+                    .name("MySQL Test User")
+                    .authProvider(AuthProvider.LOCAL)
+                    .role(Role.USER)
+                    .isActive(true)
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            userMapper.insert(testUser);
+        }
         savedUserId = testUser.getId();
 
-        testAsset = Asset.builder()
-                .userId(savedUserId)
-                .symbol("BTC")
-                .name("Bitcoin")
-                .assetType(AssetType.CRYPTO)
-                .exchange("UPBIT")
-                .quantity(BigDecimal.valueOf(0.5))
-                .averagePrice(BigDecimal.valueOf(50000.00))
-                .currency("KRW")
-                .isActive(true)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        assetMapper.insert(testAsset);
+        Optional<Asset> existingAssetOpt = assetMapper.findByUserIdAndSymbol(savedUserId, "BTC");
+        if (existingAssetOpt.isPresent()) {
+            testAsset = existingAssetOpt.get();
+        } else {
+            testAsset = Asset.builder()
+                    .userId(savedUserId)
+                    .symbol("BTC")
+                    .name("Bitcoin")
+                    .assetType(AssetType.CRYPTO)
+                    .exchange("UPBIT")
+                    .quantity(BigDecimal.valueOf(0.5))
+                    .averagePrice(BigDecimal.valueOf(50000.00))
+                    .currency("KRW")
+                    .isActive(true)
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            assetMapper.insert(testAsset);
+        }
         savedAssetId = testAsset.getId();
     }
 
@@ -74,8 +85,9 @@ class MySQLIntegrationTest {
     @DisplayName("MySQL 연결 및 기본 Mapper 동작 테스트")
     void testMySQLConnection() {
         // Given: 테스트 사용자 생성
+        String uniqueEmail = "test" + System.currentTimeMillis() + "@mysql.com";
         testUser = User.builder()
-                .email("test@mysql.com")
+                .email(uniqueEmail)
                 .password("password123")
                 .name("MySQL Test User")
                 .authProvider(AuthProvider.LOCAL)
@@ -97,7 +109,7 @@ class MySQLIntegrationTest {
         assertThat(foundUserOpt).isPresent();
         
         User foundUser = foundUserOpt.get();
-        assertThat(foundUser.getEmail()).isEqualTo("test@mysql.com");
+        assertThat(foundUser.getEmail()).isEqualTo(uniqueEmail);
         assertThat(foundUser.getName()).isEqualTo("MySQL Test User");
         
         System.out.println("✅ MySQL 연결 및 UserMapper 동작 확인 완료");
