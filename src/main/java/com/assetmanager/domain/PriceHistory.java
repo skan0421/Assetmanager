@@ -31,6 +31,15 @@ public class PriceHistory {
     private LocalDateTime priceTimestamp;
     private LocalDateTime createdAt;
 
+    // MyBatis 매퍼에서 사용하는 alias 호환용 메서드
+    public LocalDateTime getTimestamp() {
+        return priceTimestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.priceTimestamp = timestamp;
+    }
+
     public boolean hasPriceChanged() {
         return closePrice != null && openPrice != null && closePrice.compareTo(openPrice) != 0;
     }

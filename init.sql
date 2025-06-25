@@ -2,6 +2,9 @@
 -- 작성일: 2025-06-23
 -- MyBatis 기반 설계
 
+-- 첫 줄에 추가
+CREATE DATABASE IF NOT EXISTS assetmanager;
+
 -- 데이터베이스 선택
 USE assetmanager;
 
@@ -47,7 +50,7 @@ CREATE TABLE IF NOT EXISTS assets (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     
     -- 인덱스
-    UNIQUE KEY uk_user_symbol_exchange (user_id, symbol, exchange) COMMENT '동일 사용자의 동일 종목 중복 방지',
+    UNIQUE KEY uk_user_symbol_exchange (user_id, symbol, exchange),
     INDEX idx_user_id (user_id),
     INDEX idx_symbol (symbol),
     INDEX idx_asset_type (asset_type),

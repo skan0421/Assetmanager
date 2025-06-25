@@ -1,0 +1,35 @@
+spring:
+  # MySQL 테스트 환경 설정
+  datasource:
+    url: jdbc:mysql://localhost:3306/assetmanager
+    username: assetmanager
+    password: password123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 20000
+
+  # 스키마 초기화 설정
+  sql:
+    init:
+      mode: never
+      schema-locations: classpath:schema.sql
+      continue-on-error: false
+
+# MyBatis 설정
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.assetmanager.domain
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 로깅 설정 (상세한 SQL 로그)
+logging:
+  level:
+    com.assetmanager.mapper: DEBUG
+    org.springframework.jdbc: DEBUG
+    org.springframework.transaction: DEBUG
+    org.mybatis: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

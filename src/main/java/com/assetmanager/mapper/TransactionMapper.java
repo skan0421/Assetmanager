@@ -159,13 +159,14 @@ public interface TransactionMapper {
      * 월별 거래 통계
      */
     @Select("SELECT " +
-            "DATE_FORMAT(transaction_date, '%Y-%m') as month, " +
+            "YEAR(transaction_date) as year, " +
+            "MONTH(transaction_date) as month, " +
             "COUNT(*) as transaction_count, " +
             "SUM(total_amount) as total_amount " +
             "FROM transactions " +
             "WHERE user_id = #{userId} " +
-            "GROUP BY DATE_FORMAT(transaction_date, '%Y-%m') " +
-            "ORDER BY month DESC")
+            "GROUP BY YEAR(transaction_date), MONTH(transaction_date) " +
+            "ORDER BY YEAR(transaction_date) DESC, MONTH(transaction_date) DESC")
     List<Object> getMonthlyTransactionStats(Long userId);
     
     // =================
